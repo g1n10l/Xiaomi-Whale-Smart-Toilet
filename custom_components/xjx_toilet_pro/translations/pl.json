@@ -1,0 +1,54 @@
+{
+  "title": "Xiaomi Mijia Whale Smart Toilet Cover",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Połącz Xiaomi Mijia Whale Smart Toilet Cover",
+        "description": "Podaj lokalny adres IP oraz 32-znakowy token Xiaomi miIO.",
+        "data": {
+          "host": "Adres IP",
+          "token": "Token miIO",
+          "name": "Nazwa"
+        },
+        "data_description": {
+          "host": "Ustaw urządzeniu stały lub zarezerwowany adres IP.",
+          "token": "32-znakowy lokalny token miIO.",
+          "name": "Nazwa urządzenia wyświetlana w Home Assistant."
+        }
+      },
+      "reconfigure": {
+        "title": "Zmień konfigurację Xiaomi Mijia Whale Smart Toilet Cover",
+        "description": "Zaktualizuj dane lokalnego połączenia.",
+        "data": {
+          "host": "Adres IP",
+          "token": "Token miIO",
+          "name": "Nazwa"
+        },
+        "data_description": {
+          "host": "Ustaw urządzeniu stały lub zarezerwowany adres IP.",
+          "token": "32-znakowy lokalny token miIO.",
+          "name": "Nazwa urządzenia wyświetlana w Home Assistant."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można połączyć się z urządzeniem. Sprawdź adres IP, token, sieć i dostępność urządzenia.",
+      "unsupported_model": "Połączone urządzenie nie zgłasza modelu xjx.toilet.pro.",
+      "unknown": "Wystąpił nieoczekiwany błąd podczas łączenia z urządzeniem."
+    },
+    "abort": {
+      "already_configured": "Ta deska jest już skonfigurowana.",
+      "reconfigure_successful": "Ustawienia połączenia zostały zaktualizowane."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "occupied": {"name": "Zajęta"},
+      "air_filter": {"name": "Filtr powietrza"}
+    },
+    "switch": {
+      "led": {"name": "Oświetlenie nocne"},
+      "self_clean": {"name": "Samooczyszczanie"}
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "title": "Xiaomi Mijia Whale Smart Toilet Cover",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Xiaomi Mijia Whale Smart Toilet Cover",
+        "description": "Enter the local IP address and 32-character Xiaomi miIO token.",
+        "data": {
+          "host": "IP address",
+          "token": "miIO token",
+          "name": "Name"
+        },
+        "data_description": {
+          "host": "Keep the device on a fixed/reserved IP address.",
+          "token": "32-character local miIO token.",
+          "name": "Name shown for the device in Home Assistant."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Xiaomi Mijia Whale Smart Toilet Cover",
+        "description": "Update the local connection details.",
+        "data": {
+          "host": "IP address",
+          "token": "miIO token",
+          "name": "Name"
+        },
+        "data_description": {
+          "host": "Keep the device on a fixed/reserved IP address.",
+          "token": "32-character local miIO token.",
+          "name": "Name shown for the device in Home Assistant."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect. Check the IP address, token, network and device availability.",
+      "unsupported_model": "The connected device does not report model xjx.toilet.pro.",
+      "unknown": "Unexpected error while connecting to the device."
+    },
+    "abort": {
+      "already_configured": "This toilet cover is already configured.",
+      "reconfigure_successful": "The connection settings were updated."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "occupied": {"name": "Occupied"},
+      "air_filter": {"name": "Air filter"}
+    },
+    "switch": {
+      "led": {"name": "Night LED"},
+      "self_clean": {"name": "Self-cleaning"}
+    }
+  }
+}

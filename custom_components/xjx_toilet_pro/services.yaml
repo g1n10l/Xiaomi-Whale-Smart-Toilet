@@ -1,0 +1,26 @@
+send_command:
+  name: Send raw command
+  description: Send a raw miIO command to the Xiaomi Mijia Whale Smart Toilet Cover.
+  fields:
+    config_entry_id:
+      name: Integration entry
+      description: Config entry ID of the toilet cover to target.
+      required: true
+      selector:
+        config_entry:
+          integration: xjx_toilet_pro
+    command:
+      name: Command
+      description: Raw miIO command name, for example func_off.
+      required: true
+      example: func_off
+      selector:
+        text:
+    params:
+      name: Parameters
+      description: Optional list or dictionary of raw miIO command parameters.
+      required: false
+      example:
+        - night_led
+      selector:
+        object: {}
