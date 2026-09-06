@@ -3,38 +3,45 @@
 [![HACS validation](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hacs.yaml/badge.svg)](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hacs.yaml)
 [![Hassfest](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hassfest.yaml)
 
-Nowoczesna integracja Home Assistant dla deski sedesowej **Xiaomi Mijia Whale Smart Toilet Cover** (`xjx.toilet.pro`). Komunikuje się lokalnie przez protokół Xiaomi miIO — po skonfigurowaniu nie wymaga chmury Xiaomi.
+A local Home Assistant integration for the **Xiaomi Mijia Whale Smart Toilet Cover**, model `xjx.toilet.pro`. It communicates directly with the device through Xiaomi miIO and does not require the Xiaomi cloud after setup.
 
-Projekt jest rozwinięciem integracji [tykarol/home-assistant-xjx-toilet-pro](https://github.com/tykarol/home-assistant-xjx-toilet-pro), dostosowanym do Home Assistant 2026.9+. Nie wymaga starego, osobnego komponentu `toiletlid` ani konfiguracji YAML.
+This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.com/tykarol/home-assistant-xjx-toilet-pro) for Home Assistant 2026.9 and newer. It replaces the old YAML setup and no longer requires the separate `toiletlid` component.
 
-## Funkcje
+## Features
 
-- konfiguracja z interfejsu Home Assistant,
-- lokalne odpytywanie urządzenia co 30 sekund,
-- czujnik zajęcia deski,
-- czujnik działania filtra powietrza,
-- przełącznik oświetlenia nocnego LED,
-- przełącznik samooczyszczania,
-- akcja `xjx_toilet_pro.send_command` do zaawansowanych automatyzacji,
-- możliwość zmiany adresu IP i tokenu przez opcję **Konfiguruj ponownie**.
+- Setup and reconfiguration through the Home Assistant interface
+- Local polling every 30 seconds
+- Seat occupancy binary sensor
+- Air filter status binary sensor
+- Night LED switch
+- Self-cleaning switch
+- `xjx_toilet_pro.send_command` action for advanced automations
+- Stable device and entity identifiers based on the device MAC address
 
-## Instalacja przez HACS
+## Requirements
 
-1. W HACS otwórz menu i wybierz **Niestandardowe repozytoria**.
-2. Dodaj `https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet` jako typ **Integracja**.
-3. Wyszukaj **Xiaomi Mijia Whale Smart Toilet Cover** i wybierz **Pobierz**.
-4. Uruchom ponownie Home Assistant.
-5. Przejdź do **Ustawienia → Urządzenia i usługi → Dodaj integrację**.
-6. Wyszukaj nazwę integracji, a następnie podaj lokalny adres IP i 32-znakowy token miIO.
+- Home Assistant 2026.9.0 or newer
+- Xiaomi Mijia Whale Smart Toilet Cover with model identifier `xjx.toilet.pro`
+- A fixed or DHCP-reserved IP address for the device
+- The device's 32-character local miIO token
 
-## Instalacja ręczna
+## Install with HACS
 
-Skopiuj katalog `custom_components/xjx_toilet_pro` do `/config/custom_components/xjx_toilet_pro` w Home Assistant, uruchom Home Assistant ponownie i dodaj integrację z poziomu interfejsu.
+1. Open HACS and select **Custom repositories** from the menu.
+2. Add `https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet` as an **Integration** repository.
+3. Find **Xiaomi Mijia Whale Smart Toilet Cover** and select **Download**.
+4. Restart Home Assistant.
+5. Open **Settings > Devices & services > Add integration**.
+6. Search for the integration and enter the device IP address and miIO token.
 
-## Migracja ze starej wersji
+## Manual installation
 
-1. Usuń lub wyłącz `custom_components/toiletlid` oraz wcześniejszą wersję `custom_components/xjx_toilet_pro`.
-2. Usuń starą sekcję YAML, np.:
+Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet_pro`, restart Home Assistant, then add the integration from **Settings > Devices & services**.
+
+## Migrating from the old integration
+
+1. Remove or disable `custom_components/toiletlid` and the previous `custom_components/xjx_toilet_pro` version.
+2. Remove the old YAML configuration, for example:
 
    ```yaml
    toiletlid:
@@ -43,17 +50,17 @@ Skopiuj katalog `custom_components/xjx_toilet_pro` do `/config/custom_components
        token: !secret xjx_toilet_pro_token
    ```
 
-3. Zainstaluj tę wersję, uruchom Home Assistant ponownie i skonfiguruj urządzenie w interfejsie.
+3. Install this version, restart Home Assistant, and configure the device through the interface.
 
-## Akcja surowej komendy
+## Raw command action
 
-Akcja `xjx_toilet_pro.send_command` przyjmuje:
+The `xjx_toilet_pro.send_command` action accepts these fields:
 
-- `config_entry_id` — identyfikator wpisu integracji (wybierany w edytorze akcji),
-- `command` — nazwa komendy miIO,
-- `params` — opcjonalna lista lub mapa parametrów.
+- `config_entry_id`: the integration entry to target
+- `command`: the raw miIO command name
+- `params`: an optional list or mapping of command parameters
 
-Przykład:
+Example:
 
 ```yaml
 action: xjx_toilet_pro.send_command
@@ -64,15 +71,28 @@ data:
     - night_led
 ```
 
-Surowe komendy omijają zabezpieczenia encji. Korzystaj z nich tylko wtedy, gdy znasz zachowanie danej komendy urządzenia.
+Raw commands bypass the safeguards provided by entities. Use them only when you know how the device handles the selected command.
 
-## Ważne informacje
+## Troubleshooting
 
-- Urządzenie powinno mieć stały lub zarezerwowany adres IP.
-- Token miIO ma dokładnie 32 znaki i nie jest wypisywany w logach.
-- Integracja obsługuje model `xjx.toilet.pro`.
-- Autor modernizacji nie miał fizycznego urządzenia do końcowego testu sprzętowego; zgłoszenia z logami diagnostycznymi są mile widziane w [Issues](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues).
+- Reserve the device IP address in your router. A changed address will interrupt local communication.
+- Check that the miIO token contains exactly 32 characters.
+- Keep Home Assistant and the toilet cover on networks that can communicate over the local LAN.
+- Enable debug logging if setup or polling fails:
 
-## Licencja i autorzy
+  ```yaml
+  logger:
+    logs:
+      custom_components.xjx_toilet_pro: debug
+      miio: debug
+  ```
 
-Kod jest udostępniany na licencji MIT. Podziękowania dla [tykarol](https://github.com/tykarol) za pierwotną integrację i rozpoznanie komend urządzenia.
+The integration never writes the miIO token to its own logs. Review logs before sharing them and remove any private network details.
+
+## Hardware testing
+
+The modernization has passed static validation but has not yet been tested by the maintainer with a physical `xjx.toilet.pro` device. Please report hardware results and relevant sanitized logs through [GitHub Issues](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues).
+
+## License and credits
+
+Released under the MIT License. Thanks to [tykarol](https://github.com/tykarol) for the original integration and the device command research.

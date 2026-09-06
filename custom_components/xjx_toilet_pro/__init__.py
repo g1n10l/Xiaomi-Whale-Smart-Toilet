@@ -31,6 +31,8 @@ from .coordinator import XjxToiletProCoordinator
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SWITCH]
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 SERVICE_SEND_COMMAND_SCHEMA = vol.Schema(
     {
         vol.Required("config_entry_id"): cv.string,

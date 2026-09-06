@@ -1,16 +1,16 @@
 {
   "domain": "xjx_toilet_pro",
   "name": "Xiaomi Mijia Whale Smart Toilet Cover",
-  "version": "2026.9.0",
   "codeowners": ["@g1n10l"],
   "config_flow": true,
   "documentation": "https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet",
-  "issue_tracker": "https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues",
   "integration_type": "device",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues",
   "loggers": ["miio"],
   "requirements": [
     "construct==2.10.68",
     "python-miio==0.5.12"
-  ]
+  ],
+  "version": "2026.9.0"
 }

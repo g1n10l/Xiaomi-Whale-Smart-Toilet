@@ -1,7 +1,7 @@
 # Xiaomi Mijia Whale Smart Toilet Cover
 
-Lokalna integracja Home Assistant dla modelu `xjx.toilet.pro`.
+A local Home Assistant integration for `xjx.toilet.pro`.
 
-Po instalacji uruchom Home Assistant ponownie, a następnie dodaj integrację w **Ustawienia → Urządzenia i usługi**. Potrzebujesz adresu IP urządzenia i 32-znakowego tokenu miIO.
+After installation, restart Home Assistant and add the integration from **Settings > Devices & services**. Setup requires the device IP address and its 32-character local miIO token.
 
-Pełna instrukcja, opis encji i przykład akcji znajdują się w [README](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet#readme).
+See the [README](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet#readme) for installation, migration, entity, action, and troubleshooting details.
