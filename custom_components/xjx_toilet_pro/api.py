@@ -29,6 +29,8 @@ class ToiletlidStatus:
     self_clean: bool
     warm_air_drying: bool | None
     fan_temperature: int | None
+    rear_wash_water_temperature: int | None
+    feminine_wash_water_temperature: int | None
 
 
 class XjxToiletProClient(Device):
@@ -52,6 +54,8 @@ class XjxToiletProClient(Device):
             # firmware revisions, so experimental controls use assumed state.
             warm_air_drying=None,
             fan_temperature=None,
+            rear_wash_water_temperature=None,
+            feminine_wash_water_temperature=None,
         )
 
     def set_self_clean(self, state: bool) -> Any:
@@ -68,9 +72,18 @@ class XjxToiletProClient(Device):
 
     def set_fan_temperature(self, level: int) -> Any:
         """Set the warm-air drying temperature level."""
-        if level not in (1, 2, 3):
-            raise ValueError("Fan temperature level must be 1, 2 or 3")
+        _validate_temperature_level(level)
         return self.send("set_fan_temp", [level])
+
+    def set_rear_wash_water_temperature(self, level: int) -> Any:
+        """Set the rear-wash water temperature level."""
+        _validate_temperature_level(level)
+        return self.send("set_water_temp_t", [level])
+
+    def set_feminine_wash_water_temperature(self, level: int) -> Any:
+        """Set the feminine-wash water temperature level."""
+        _validate_temperature_level(level)
+        return self.send("set_water_temp_w", [level])
 
     def set_warm_air_drying(self, state: bool) -> Any:
         """Start or stop warm-air drying."""
@@ -97,3 +110,9 @@ def _as_bool(value: Any) -> bool:
         return bool(int(value))
     except (TypeError, ValueError):
         return bool(value)
+
+
+def _validate_temperature_level(level: int) -> None:
+    """Validate a three-level temperature setting."""
+    if level not in (1, 2, 3):
+        raise ValueError("Temperature level must be 1, 2 or 3")

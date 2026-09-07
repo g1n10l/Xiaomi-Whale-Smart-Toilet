@@ -17,6 +17,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Self-cleaning switch
 - Experimental warm-air drying switch
 - Experimental warm-air temperature selector (low, medium and high)
+- Experimental rear-wash water temperature selector (low, medium and high)
+- Experimental feminine-wash water temperature selector (low, medium and high)
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -54,7 +56,7 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
 
-## Experimental warm-air controls
+## Experimental temperature controls
 
 Warm-air drying support is experimental. Some firmware revisions reject local
 reads of `fan_temp` and `status_warmdry` with error `-9999` (`user ack timeout`).
@@ -75,6 +77,19 @@ The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
 
 Home Assistant retains the last temperature level selected in the current
 integration session instead of polling the unreliable `fan_temp` property.
+
+The **Rear-wash water temperature** and **Feminine-wash water temperature**
+selectors use `set_water_temp_t` and `set_water_temp_w`. Both accept three
+levels:
+
+- Low: level 1, approximately 35°C
+- Medium: level 2, approximately 37°C
+- High: level 3, approximately 39°C
+
+The corresponding `water_temp_t` and `water_temp_w` properties return timeouts
+on some firmware revisions, so the integration does not poll them. Home
+Assistant retains the last level selected in the current integration session.
+Change the water temperature only while the corresponding wash mode is active.
 
 ## Raw command action
 

@@ -59,6 +59,22 @@
           "medium": "Medium (about 43°C)",
           "high": "High (about 50°C)"
         }
+      },
+      "rear_wash_water_temperature": {
+        "name": "Rear-wash water temperature",
+        "state": {
+          "low": "Low (about 35°C)",
+          "medium": "Medium (about 37°C)",
+          "high": "High (about 39°C)"
+        }
+      },
+      "feminine_wash_water_temperature": {
+        "name": "Feminine-wash water temperature",
+        "state": {
+          "low": "Low (about 35°C)",
+          "medium": "Medium (about 37°C)",
+          "high": "High (about 39°C)"
+        }
       }
     }
   }

@@ -59,6 +59,22 @@
           "medium": "Średnia (około 43°C)",
           "high": "Wysoka (około 50°C)"
         }
+      },
+      "rear_wash_water_temperature": {
+        "name": "Temperatura wody, mycie tylne",
+        "state": {
+          "low": "Niska (około 35°C)",
+          "medium": "Średnia (około 37°C)",
+          "high": "Wysoka (około 39°C)"
+        }
+      },
+      "feminine_wash_water_temperature": {
+        "name": "Temperatura wody, mycie damskie",
+        "state": {
+          "low": "Niska (około 35°C)",
+          "medium": "Średnia (około 37°C)",
+          "high": "Wysoka (około 39°C)"
+        }
       }
     }
   }
