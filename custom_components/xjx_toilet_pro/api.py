@@ -28,6 +28,8 @@ class ToiletlidStatus:
     led: bool
     self_clean: bool
     warm_air_drying: bool | None
+    rear_wash: bool | None
+    feminine_wash: bool | None
     fan_temperature: int | None
     rear_wash_water_temperature: int | None
     feminine_wash_water_temperature: int | None
@@ -55,6 +57,8 @@ class XjxToiletProClient(Device):
             # These properties return -9999 (user ack timeout) on some
             # firmware revisions, so experimental controls use assumed state.
             warm_air_drying=None,
+            rear_wash=None,
+            feminine_wash=None,
             fan_temperature=None,
             rear_wash_water_temperature=None,
             feminine_wash_water_temperature=None,
@@ -92,6 +96,18 @@ class XjxToiletProClient(Device):
         if state:
             return self.send("warmdry_on")
         return self.send("func_off", ["warm_dry"])
+
+    def set_rear_wash(self, state: bool) -> Any:
+        """Start or stop rear washing."""
+        if state:
+            return self.send("tunwash_on")
+        return self.send("func_off", ["tun_wash"])
+
+    def set_feminine_wash(self, state: bool) -> Any:
+        """Start or stop feminine washing."""
+        if state:
+            return self.send("womenwash_on")
+        return self.send("func_off", ["women_wash"])
 
     def raw_command(
         self,

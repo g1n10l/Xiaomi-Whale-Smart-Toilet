@@ -18,6 +18,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Night LED switch
 - Self-cleaning switch
 - Experimental warm-air drying switch
+- Experimental rear-wash switch
+- Experimental feminine-wash switch
 - Experimental warm-air temperature selector (low, medium and high)
 - Experimental rear-wash water temperature selector (low, medium and high)
 - Experimental feminine-wash water temperature selector (low, medium and high)
@@ -70,6 +72,15 @@ The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
 Assistant assumes the last state requested through this switch. The toilet
 cover should allow drying only while the seat is occupied and stop it
 automatically after about two minutes.
+
+The **Rear wash** and **Feminine wash** switches use the unverified local miIO
+commands `tunwash_on` and `womenwash_on`. They stop the corresponding mode with
+`func_off ["tun_wash"]` and `func_off ["women_wash"]`. Home Assistant assumes
+the last state requested because the integration does not poll the wash-status
+properties. The device should require an occupied seat and stop washing
+automatically after about two minutes. Command names and parameters may differ
+between firmware revisions, so test these switches while you can stop the
+device with its physical controls.
 
 The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
 

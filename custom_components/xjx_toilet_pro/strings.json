@@ -55,7 +55,9 @@
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},
-      "warm_air_drying": {"name": "Warm-air drying"}
+      "warm_air_drying": {"name": "Warm-air drying"},
+      "rear_wash": {"name": "Rear wash (experimental)"},
+      "feminine_wash": {"name": "Feminine wash (experimental)"}
     },
     "select": {
       "fan_temperature": {

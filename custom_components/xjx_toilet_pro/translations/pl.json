@@ -55,7 +55,9 @@
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},
-      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"}
+      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"},
+      "rear_wash": {"name": "Mycie męskie (eksperymentalne)"},
+      "feminine_wash": {"name": "Mycie damskie (eksperymentalne)"}
     },
     "select": {
       "fan_temperature": {
