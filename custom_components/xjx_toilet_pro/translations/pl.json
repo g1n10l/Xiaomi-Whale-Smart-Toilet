@@ -61,7 +61,7 @@
         }
       },
       "rear_wash_water_temperature": {
-        "name": "Temperatura wody, mycie tylne",
+        "name": "Temperatura wody, mycie męskie",
         "state": {
           "low": "Niska (około 35°C)",
           "medium": "Średnia (około 37°C)",
