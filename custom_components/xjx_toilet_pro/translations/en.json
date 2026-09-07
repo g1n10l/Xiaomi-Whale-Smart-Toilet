@@ -46,6 +46,12 @@
       "occupied": {"name": "Occupied"},
       "air_filter": {"name": "Air filter"}
     },
+    "sensor": {
+      "water_filter_last_replaced": {"name": "Last water filter replacement"}
+    },
+    "button": {
+      "water_filter_reset": {"name": "Reset water filter replacement date"}
+    },
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},

@@ -12,3 +12,5 @@ UPDATE_INTERVAL_SECONDS = 30
 SERVICE_SEND_COMMAND = "send_command"
 ATTR_COMMAND = "command"
 ATTR_PARAMS = "params"
+
+DATA_WATER_FILTER_TRACKER = "water_filter_tracker"

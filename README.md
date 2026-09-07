@@ -13,6 +13,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Local polling every 30 seconds
 - Seat occupancy binary sensor
 - Air filter status binary sensor
+- Persistent date and time of the last water-filter replacement
+- Button that records the current date and time after replacing the water filter
 - Night LED switch
 - Self-cleaning switch
 - Experimental warm-air drying switch
