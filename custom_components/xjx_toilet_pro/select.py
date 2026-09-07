@@ -6,6 +6,7 @@ from homeassistant.components.select import SelectEntity, SelectEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from .const import (
     CONF_MAC,
@@ -50,7 +51,7 @@ async def async_setup_entry(
     )
 
 
-class XjxFanTemperatureSelect(XjxToiletProEntity, SelectEntity):
+class XjxFanTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
     """Optimistic warm-air temperature selector."""
 
     entity_description = DESCRIPTION
@@ -72,12 +73,24 @@ class XjxFanTemperatureSelect(XjxToiletProEntity, SelectEntity):
         )
         self._selected_level: int | None = None
 
+    async def async_added_to_hass(self) -> None:
+        """Restore the last selected temperature."""
+        await super().async_added_to_hass()
+        if (
+            (last_state := await self.async_get_last_state()) is not None
+            and last_state.state in TEMPERATURE_TO_LEVEL
+        ):
+            self._selected_level = TEMPERATURE_TO_LEVEL[last_state.state]
+
     @property
     def current_option(self) -> str | None:
         """Return the selected temperature level."""
-        if self.coordinator.data is None:
-            return None
-        level = self.coordinator.data.fan_temperature or self._selected_level
+        level = (
+            self.coordinator.data.fan_temperature
+            if self.coordinator.data is not None
+            else None
+        )
+        level = level or self._selected_level
         return LEVEL_TO_TEMPERATURE.get(level)
 
     async def async_select_option(self, option: str) -> None:

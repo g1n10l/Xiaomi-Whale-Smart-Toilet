@@ -67,8 +67,8 @@ The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 - Medium: level 2, approximately 43°C
 - High: level 3, approximately 50°C
 
-The device does not reliably report `fan_temp`, so Home Assistant displays the
-last level selected during the current integration session.
+The device does not reliably report `fan_temp`, so Home Assistant stores the
+last selected level and restores it after a restart.
 
 ## Raw command action
 
