@@ -15,7 +15,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .api import ToiletlidStatus
-from .const import CONF_MODEL, DEFAULT_NAME, DOMAIN, MODEL_XJX_TOILET_PRO
+from .const import (
+    CONF_MAC,
+    CONF_MODEL,
+    DATA_COORDINATOR,
+    DEFAULT_NAME,
+    DOMAIN,
+    MODEL_XJX_TOILET_PRO,
+)
 from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
 
@@ -51,8 +58,8 @@ async def async_setup_entry(
 ) -> None:
     """Set up binary sensors from a config entry."""
     data = hass.data[DOMAIN][entry.entry_id]
-    coordinator: XjxToiletProCoordinator = data["coordinator"]
-    mac: str = data["mac"]
+    coordinator: XjxToiletProCoordinator = data[DATA_COORDINATOR]
+    mac: str = data[CONF_MAC]
     model = entry.data.get(CONF_MODEL, MODEL_XJX_TOILET_PRO)
     name = entry.title or DEFAULT_NAME
     async_add_entities(

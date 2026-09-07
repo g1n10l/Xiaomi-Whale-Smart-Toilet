@@ -23,6 +23,9 @@ from .api import XjxToiletProClient
 from .const import (
     ATTR_COMMAND,
     ATTR_PARAMS,
+    CONF_MAC,
+    CONF_MODEL,
+    DATA_COORDINATOR,
     DOMAIN,
     MODEL_XJX_TOILET_PRO,
     SERVICE_SEND_COMMAND,
@@ -54,7 +57,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             raise ServiceValidationError("XJX Toilet Pro config entry is not loaded")
 
         coordinator: XjxToiletProCoordinator = hass.data[DOMAIN][entry_id][
-            "coordinator"
+            DATA_COORDINATOR
         ]
         params: Any = call.data.get(ATTR_PARAMS)
         # Older automations may pass a list literal as a string.
@@ -93,7 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up XJX Toilet Pro from a config entry."""
     host = entry.data[CONF_HOST]
     token = entry.data[CONF_TOKEN]
-    model = entry.data.get("model", MODEL_XJX_TOILET_PRO)
+    model = entry.data.get(CONF_MODEL, MODEL_XJX_TOILET_PRO)
     client = XjxToiletProClient(host, token, model=model)
 
     try:
@@ -101,13 +104,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except DeviceException as err:
         raise ConfigEntryNotReady(f"Unable to connect to {host}: {err}") from err
 
-    mac = str(entry.data.get("mac") or info.mac_address).lower()
+    mac = str(entry.data.get(CONF_MAC) or info.mac_address).lower()
     coordinator = XjxToiletProCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
-        "coordinator": coordinator,
-        "mac": mac,
+        DATA_COORDINATOR: coordinator,
+        CONF_MAC: mac,
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

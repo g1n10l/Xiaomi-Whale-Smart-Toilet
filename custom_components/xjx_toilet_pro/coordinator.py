@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import timedelta
-from functools import partial
 import logging
 from typing import Any
-from collections.abc import Callable
 
 from miio import DeviceException
 
@@ -43,7 +42,7 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
     async def async_execute(self, func: Callable[..., Any], *args: Any) -> Any:
         """Run a blocking miIO command and refresh state."""
         try:
-            result = await self.hass.async_add_executor_job(partial(func, *args))
+            result = await self.hass.async_add_executor_job(func, *args)
         except DeviceException as err:
             raise UpdateFailed(
                 f"Unable to send command to the toilet cover: {err}"

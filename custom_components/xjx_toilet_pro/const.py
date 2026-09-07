@@ -7,6 +7,8 @@ MODEL_XJX_TOILET_PRO = "xjx.toilet.pro"
 CONF_MODEL = "model"
 CONF_MAC = "mac"
 
+DATA_COORDINATOR = "coordinator"
+
 UPDATE_INTERVAL_SECONDS = 30
 
 SERVICE_SEND_COMMAND = "send_command"

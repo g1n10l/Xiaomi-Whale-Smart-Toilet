@@ -33,21 +33,20 @@ async def _validate_device(
 
 def _data_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
     """Return the connection form schema."""
-    if defaults is None:
-        return vol.Schema(
-            {
-                vol.Required(CONF_HOST): str,
-                vol.Required(CONF_TOKEN): vol.All(str, vol.Length(min=32, max=32)),
-                vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
-            }
+    host = vol.Required(CONF_HOST)
+    token = vol.Required(CONF_TOKEN)
+    name = vol.Optional(CONF_NAME, default=DEFAULT_NAME)
+    if defaults is not None:
+        host = vol.Required(CONF_HOST, default=defaults[CONF_HOST])
+        token = vol.Required(CONF_TOKEN, default=defaults[CONF_TOKEN])
+        name = vol.Optional(
+            CONF_NAME, default=defaults.get(CONF_NAME, DEFAULT_NAME)
         )
     return vol.Schema(
         {
-            vol.Required(CONF_HOST, default=defaults[CONF_HOST]): str,
-            vol.Required(CONF_TOKEN, default=defaults[CONF_TOKEN]): vol.All(
-                str, vol.Length(min=32, max=32)
-            ),
-            vol.Optional(CONF_NAME, default=defaults.get(CONF_NAME, DEFAULT_NAME)): str,
+            host: str,
+            token: vol.All(str, vol.Length(min=32, max=32)),
+            name: str,
         }
     )
 
