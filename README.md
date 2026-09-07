@@ -56,10 +56,10 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
 
 ## Warm-air drying
 
-The **Warm-air drying** switch starts drying with `warm_dry_on` and stops it with
-`func_off ["warm_dry"]`. The device does not reliably report the drying state,
-so Home Assistant displays the last state requested during the current
-integration session.
+The **Warm-air drying** switch starts drying with `warm_dry_on` and the last
+selected temperature level. It stops drying with `func_off ["warm_dry"]`. The
+device does not reliably report the drying state, so Home Assistant displays
+the last state requested during the current integration session.
 
 The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 

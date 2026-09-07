@@ -81,6 +81,7 @@ class XjxFanTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
             and last_state.state in TEMPERATURE_TO_LEVEL
         ):
             self._selected_level = TEMPERATURE_TO_LEVEL[last_state.state]
+            self.coordinator.client.remember_fan_temperature(self._selected_level)
 
     @property
     def current_option(self) -> str | None:

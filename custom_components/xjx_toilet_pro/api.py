@@ -18,6 +18,8 @@ AVAILABLE_PROPERTIES: dict[str, list[str]] = {
     ]
 }
 
+DEFAULT_FAN_TEMPERATURE_LEVEL = 2
+
 
 @dataclass(slots=True)
 class ToiletlidStatus:
@@ -39,6 +41,7 @@ class XjxToiletProClient(Device):
     def __init__(self, ip: str, token: str, model: str = MODEL_XJX_TOILET_PRO) -> None:
         super().__init__(ip, token, model=model)
         self._model = model if model in AVAILABLE_PROPERTIES else MODEL_XJX_TOILET_PRO
+        self._fan_temperature_level = DEFAULT_FAN_TEMPERATURE_LEVEL
 
     def status(self) -> ToiletlidStatus:
         """Retrieve and parse device properties."""
@@ -69,14 +72,26 @@ class XjxToiletProClient(Device):
     def set_warm_air_drying(self, state: bool) -> Any:
         """Start or stop warm-air drying."""
         if state:
-            return self.send("warm_dry_on")
+            return self.send("warm_dry_on", [self._fan_temperature_level])
         return self.send("func_off", ["warm_dry"])
 
     def set_fan_temperature(self, level: int) -> Any:
         """Set the warm-air temperature level."""
+        self._validate_fan_temperature(level)
+        result = self.send("set_fan_temp", [level])
+        self._fan_temperature_level = level
+        return result
+
+    def remember_fan_temperature(self, level: int) -> None:
+        """Remember a temperature level without sending a command."""
+        self._validate_fan_temperature(level)
+        self._fan_temperature_level = level
+
+    @staticmethod
+    def _validate_fan_temperature(level: int) -> None:
+        """Validate a warm-air temperature level."""
         if level not in (1, 2, 3):
             raise ValueError("Temperature level must be 1, 2 or 3")
-        return self.send("set_fan_temp", [level])
 
     def raw_command(
         self,
