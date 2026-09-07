@@ -27,6 +27,8 @@ class ToiletlidStatus:
     air_filter: bool
     led: bool
     self_clean: bool
+    warm_air_drying: bool | None
+    fan_temperature: int | None
 
 
 class XjxToiletProClient(Device):
@@ -48,6 +50,8 @@ class XjxToiletProClient(Device):
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
+            warm_air_drying=None,
+            fan_temperature=None,
         )
 
     def set_self_clean(self, state: bool) -> Any:
@@ -61,6 +65,18 @@ class XjxToiletProClient(Device):
         if state:
             return self.send("night_led_on")
         return self.send("func_off", ["night_led"])
+
+    def set_warm_air_drying(self, state: bool) -> Any:
+        """Start or stop warm-air drying."""
+        if state:
+            return self.send("warmdry_on")
+        return self.send("func_off", ["warm_dry"])
+
+    def set_fan_temperature(self, level: int) -> Any:
+        """Set the warm-air temperature level."""
+        if level not in (1, 2, 3):
+            raise ValueError("Temperature level must be 1, 2 or 3")
+        return self.send("set_fan_temp", [level])
 
     def raw_command(
         self,

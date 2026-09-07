@@ -48,7 +48,18 @@
     },
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
-      "self_clean": {"name": "Samooczyszczanie"}
+      "self_clean": {"name": "Samooczyszczanie"},
+      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"}
+    },
+    "select": {
+      "fan_temperature": {
+        "name": "Temperatura ciepłego nawiewu",
+        "state": {
+          "low": "Niska (około 36°C)",
+          "medium": "Średnia (około 43°C)",
+          "high": "Wysoka (około 50°C)"
+        }
+      }
     }
   }
 }

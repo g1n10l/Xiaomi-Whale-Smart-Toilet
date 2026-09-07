@@ -32,7 +32,11 @@ from .const import (
 )
 from .coordinator import XjxToiletProCoordinator
 
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SWITCH]
+PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
+    Platform.SELECT,
+    Platform.SWITCH,
+]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 

@@ -15,6 +15,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Air filter status binary sensor
 - Night LED switch
 - Self-cleaning switch
+- Experimental warm-air drying switch
+- Experimental warm-air temperature selector with three levels
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -51,6 +53,22 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
    ```
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
+
+## Warm-air drying
+
+The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
+`func_off ["warm_dry"]`. The device does not reliably report the drying state,
+so Home Assistant displays the last state requested during the current
+integration session.
+
+The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
+
+- Low: level 1, approximately 36°C
+- Medium: level 2, approximately 43°C
+- High: level 3, approximately 50°C
+
+The device does not reliably report `fan_temp`, so Home Assistant displays the
+last level selected during the current integration session.
 
 ## Raw command action
 
