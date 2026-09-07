@@ -21,7 +21,7 @@ from .entity import XjxToiletProEntity
 class XjxSwitchDescription(SwitchEntityDescription):
     """Describe an XJX switch."""
 
-    value_fn: Callable[[ToiletlidStatus], bool]
+    value_fn: Callable[[ToiletlidStatus], bool | None]
     command_name: str
 
 
@@ -89,20 +89,33 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
             unique_suffix=description.key,
         )
         self.entity_description = description
+        self._assumed_state: bool | None = None
+
+    @property
+    def assumed_state(self) -> bool:
+        """Return whether Home Assistant assumes the entity state."""
+        return self.entity_description.key == "warm_air_drying"
 
     @property
     def is_on(self) -> bool | None:
         """Return switch state."""
         if not self.coordinator.last_update_success or self.coordinator.data is None:
             return None
-        return self.entity_description.value_fn(self.coordinator.data)
+        state = self.entity_description.value_fn(self.coordinator.data)
+        return self._assumed_state if state is None else state
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the feature on."""
         func = getattr(self.coordinator.client, self.entity_description.command_name)
         await self.coordinator.async_execute(func, True)
+        if self.assumed_state:
+            self._assumed_state = True
+            self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the feature off."""
         func = getattr(self.coordinator.client, self.entity_description.command_name)
         await self.coordinator.async_execute(func, False)
+        if self.assumed_state:
+            self._assumed_state = False
+            self.async_write_ha_state()

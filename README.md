@@ -56,15 +56,16 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
 
 ## Experimental warm-air controls
 
-Warm-air drying support is experimental and has not yet been confirmed on a
-physical `xjx.toilet.pro` device. Different firmware revisions may reject the
-commands or expose their state only while drying is active.
+Warm-air drying support is experimental. Some firmware revisions reject local
+reads of `fan_temp` and `status_warmdry` with error `-9999` (`user ack timeout`).
+The integration does not poll those properties, preventing them from making
+the device unavailable or filling the log with protocol errors.
 
 The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
-`func_off ["warm_dry"]`. Its state comes from the `status_warmdry` property. The
-toilet cover should allow drying only while the seat is occupied and stop it
-automatically after about two minutes. Turning off an already stopped dryer is
-treated as successful to account for this automatic timeout.
+`func_off ["warm_dry"]`. Because the state property is unreliable, Home
+Assistant assumes the last state requested through this switch. The toilet
+cover should allow drying only while the seat is occupied and stop it
+automatically after about two minutes.
 
 The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
 
@@ -72,9 +73,8 @@ The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
 - Medium: level 2, approximately 43°C
 - High: level 3, approximately 50°C
 
-Some firmware revisions may expose `fan_temp` only while drying is active. If
-the property cannot be read, Home Assistant retains the last level selected in
-the current integration session.
+Home Assistant retains the last temperature level selected in the current
+integration session instead of polling the unreliable `fan_temp` property.
 
 ## Raw command action
 
