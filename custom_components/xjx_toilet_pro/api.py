@@ -86,7 +86,16 @@ class XjxToiletProClient(Device):
         """Start or stop warm-air drying."""
         if state:
             return self.send("warmdry_on")
-        return self.send("func_off", ["warmdry"])
+        try:
+            return self.send("func_off", ["warm_dry"])
+        except DeviceException:
+            # Drying stops automatically after about two minutes or when the
+            # user leaves the seat. Treat an off request as successful when
+            # the device has already stopped between coordinator updates.
+            values = self.get_properties(["status_warmdry"], max_properties=1)
+            if values and not _as_bool(values[0]):
+                return ["ok"]
+            raise
 
     def raw_command(
         self,

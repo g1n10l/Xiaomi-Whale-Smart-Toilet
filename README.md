@@ -61,9 +61,10 @@ physical `xjx.toilet.pro` device. Different firmware revisions may reject the
 commands or expose their state only while drying is active.
 
 The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
-`func_off ["warmdry"]`. Its state comes from the `status_warmdry` property. The
+`func_off ["warm_dry"]`. Its state comes from the `status_warmdry` property. The
 toilet cover should allow drying only while the seat is occupied and stop it
-automatically after about two minutes.
+automatically after about two minutes. Turning off an already stopped dryer is
+treated as successful to account for this automatic timeout.
 
 The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
 
