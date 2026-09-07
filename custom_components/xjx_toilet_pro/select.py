@@ -36,22 +36,6 @@ TEMPERATURE_SELECTS = (
         status_attribute="fan_temperature",
         command_name="set_fan_temperature",
     ),
-    XjxTemperatureDescription(
-        key="rear_wash_water_temperature",
-        translation_key="rear_wash_water_temperature",
-        icon="mdi:thermometer-water",
-        options=list(TEMPERATURE_TO_LEVEL),
-        status_attribute="rear_wash_water_temperature",
-        command_name="set_rear_wash_water_temperature",
-    ),
-    XjxTemperatureDescription(
-        key="feminine_wash_water_temperature",
-        translation_key="feminine_wash_water_temperature",
-        icon="mdi:thermometer-water",
-        options=list(TEMPERATURE_TO_LEVEL),
-        status_attribute="feminine_wash_water_temperature",
-        command_name="set_feminine_wash_water_temperature",
-    ),
 )
 
 

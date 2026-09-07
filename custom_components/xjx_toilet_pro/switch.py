@@ -47,23 +47,7 @@ SWITCHES = (
         value_fn=lambda status: status.warm_air_drying,
         command_name="set_warm_air_drying",
     ),
-    XjxSwitchDescription(
-        key="rear_wash",
-        translation_key="rear_wash",
-        icon="mdi:shower-head",
-        value_fn=lambda status: status.rear_wash,
-        command_name="set_rear_wash",
-    ),
-    XjxSwitchDescription(
-        key="feminine_wash",
-        translation_key="feminine_wash",
-        icon="mdi:shower-head",
-        value_fn=lambda status: status.feminine_wash,
-        command_name="set_feminine_wash",
-    ),
 )
-
-ASSUMED_STATE_SWITCHES = {"warm_air_drying", "rear_wash", "feminine_wash"}
 
 
 async def async_setup_entry(
@@ -110,7 +94,7 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
     @property
     def assumed_state(self) -> bool:
         """Return whether Home Assistant assumes the entity state."""
-        return self.entity_description.key in ASSUMED_STATE_SWITCHES
+        return self.entity_description.key == "warm_air_drying"
 
     @property
     def is_on(self) -> bool | None:
