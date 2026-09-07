@@ -23,21 +23,13 @@ from .api import XjxToiletProClient
 from .const import (
     ATTR_COMMAND,
     ATTR_PARAMS,
-    DATA_WATER_FILTER_TRACKER,
     DOMAIN,
     MODEL_XJX_TOILET_PRO,
     SERVICE_SEND_COMMAND,
 )
 from .coordinator import XjxToiletProCoordinator
-from .water_filter import WaterFilterTracker
 
-PLATFORMS: list[Platform] = [
-    Platform.BINARY_SENSOR,
-    Platform.BUTTON,
-    Platform.SELECT,
-    Platform.SENSOR,
-    Platform.SWITCH,
-]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SWITCH]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -112,13 +104,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     mac = str(entry.data.get("mac") or info.mac_address).lower()
     coordinator = XjxToiletProCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
-    water_filter_tracker = WaterFilterTracker(hass, entry.entry_id)
-    await water_filter_tracker.async_load()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         "coordinator": coordinator,
         "mac": mac,
-        DATA_WATER_FILTER_TRACKER: water_filter_tracker,
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

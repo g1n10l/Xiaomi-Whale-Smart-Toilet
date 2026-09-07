@@ -13,12 +13,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Local polling every 30 seconds
 - Seat occupancy binary sensor
 - Air filter status binary sensor
-- Persistent date and time of the last water-filter replacement
-- Button that records the current date and time after replacing the water filter
 - Night LED switch
 - Self-cleaning switch
-- Experimental warm-air drying switch
-- Experimental warm-air temperature selector (low, medium and high)
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -55,28 +51,6 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
    ```
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
-
-## Experimental temperature controls
-
-Warm-air drying support is experimental. Some firmware revisions reject local
-reads of `fan_temp` and `status_warmdry` with error `-9999` (`user ack timeout`).
-The integration does not poll those properties, preventing them from making
-the device unavailable or filling the log with protocol errors.
-
-The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
-`func_off ["warm_dry"]`. Because the state property is unreliable, Home
-Assistant assumes the last state requested through this switch. The toilet
-cover should allow drying only while the seat is occupied and stop it
-automatically after about two minutes.
-
-The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
-
-- Low: level 1, approximately 36°C
-- Medium: level 2, approximately 43°C
-- High: level 3, approximately 50°C
-
-Home Assistant retains the last temperature level selected in the current
-integration session instead of polling the unreliable `fan_temp` property.
 
 ## Raw command action
 
@@ -118,10 +92,6 @@ The integration never writes the miIO token to its own logs. Review logs before 
 ## Hardware testing
 
 The modernization has passed static validation but has not yet been tested by the maintainer with a physical `xjx.toilet.pro` device. Please report hardware results and relevant sanitized logs through [GitHub Issues](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues).
-
-The warm-air controls described above need hardware testing in particular.
-Please include the command response and sanitized debug logs when reporting
-whether they work with your firmware revision.
 
 ## License and credits
 

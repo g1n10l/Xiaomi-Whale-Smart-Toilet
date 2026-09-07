@@ -46,26 +46,9 @@
       "occupied": {"name": "Occupied"},
       "air_filter": {"name": "Air filter"}
     },
-    "sensor": {
-      "water_filter_last_replaced": {"name": "Last water filter replacement"}
-    },
-    "button": {
-      "water_filter_reset": {"name": "Reset water filter replacement date"}
-    },
     "switch": {
       "led": {"name": "Night LED"},
-      "self_clean": {"name": "Self-cleaning"},
-      "warm_air_drying": {"name": "Warm-air drying"}
-    },
-    "select": {
-      "fan_temperature": {
-        "name": "Warm-air temperature",
-        "state": {
-          "low": "Low (about 36°C)",
-          "medium": "Medium (about 43°C)",
-          "high": "High (about 50°C)"
-        }
-      }
+      "self_clean": {"name": "Self-cleaning"}
     }
   }
 }
