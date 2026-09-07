@@ -49,6 +49,16 @@
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"}
+    },
+    "select": {
+      "fan_temperature": {
+        "name": "Warm-air temperature",
+        "state": {
+          "low": "Low (about 36°C)",
+          "medium": "Medium (about 43°C)",
+          "high": "High (about 50°C)"
+        }
+      }
     }
   }
 }

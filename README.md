@@ -15,6 +15,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Air filter status binary sensor
 - Night LED switch
 - Self-cleaning switch
+- Warm-air drying temperature selector (low, medium and high)
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -92,6 +93,12 @@ The integration never writes the miIO token to its own logs. Review logs before 
 ## Hardware testing
 
 The modernization has passed static validation but has not yet been tested by the maintainer with a physical `xjx.toilet.pro` device. Please report hardware results and relevant sanitized logs through [GitHub Issues](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues).
+
+The warm-air temperature selector uses the device's `set_fan_temp` command with
+levels 1, 2 and 3. Some firmware revisions expose the corresponding `fan_temp`
+property only while drying is active. On those devices the selector retains the
+last level selected in Home Assistant until the integration is reloaded. This
+command still requires confirmation on physical hardware.
 
 ## License and credits
 
