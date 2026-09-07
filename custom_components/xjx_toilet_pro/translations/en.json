@@ -48,7 +48,8 @@
     },
     "switch": {
       "led": {"name": "Night LED"},
-      "self_clean": {"name": "Self-cleaning"}
+      "self_clean": {"name": "Self-cleaning"},
+      "warm_air_drying": {"name": "Warm-air drying"}
     },
     "select": {
       "fan_temperature": {

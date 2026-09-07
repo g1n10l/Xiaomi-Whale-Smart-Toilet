@@ -40,6 +40,13 @@ SWITCHES = (
         value_fn=lambda status: status.self_clean,
         command_name="set_self_clean",
     ),
+    XjxSwitchDescription(
+        key="warm_air_drying",
+        translation_key="warm_air_drying",
+        icon="mdi:hair-dryer",
+        value_fn=lambda status: status.warm_air_drying,
+        command_name="set_warm_air_drying",
+    ),
 )
 
 

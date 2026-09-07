@@ -15,6 +15,7 @@ AVAILABLE_PROPERTIES: dict[str, list[str]] = {
         "status_airfilter",
         "status_led",
         "status_selfclean",
+        "status_warmdry",
     ]
 }
 
@@ -27,6 +28,7 @@ class ToiletlidStatus:
     air_filter: bool
     led: bool
     self_clean: bool
+    warm_air_drying: bool
     fan_temperature: int | None
 
 
@@ -58,6 +60,7 @@ class XjxToiletProClient(Device):
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
+            warm_air_drying=_as_bool(data.get("status_warmdry")),
             fan_temperature=fan_temperature,
         )
 
@@ -78,6 +81,12 @@ class XjxToiletProClient(Device):
         if level not in (1, 2, 3):
             raise ValueError("Fan temperature level must be 1, 2 or 3")
         return self.send("set_fan_temp", [level])
+
+    def set_warm_air_drying(self, state: bool) -> Any:
+        """Start or stop warm-air drying."""
+        if state:
+            return self.send("warmdry_on")
+        return self.send("func_off", ["warmdry"])
 
     def raw_command(
         self,

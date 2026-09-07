@@ -15,6 +15,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Air filter status binary sensor
 - Night LED switch
 - Self-cleaning switch
+- Warm-air drying switch
 - Warm-air drying temperature selector (low, medium and high)
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
@@ -99,6 +100,12 @@ levels 1, 2 and 3. Some firmware revisions expose the corresponding `fan_temp`
 property only while drying is active. On those devices the selector retains the
 last level selected in Home Assistant until the integration is reloaded. This
 command still requires confirmation on physical hardware.
+
+The warm-air drying switch reads `status_warmdry`, starts drying with
+`warmdry_on`, and stops it with `func_off ["warmdry"]`. The toilet cover only
+allows drying while the seat is occupied and normally stops it automatically
+after about two minutes. The start command still requires confirmation on
+physical hardware.
 
 ## License and credits
 
