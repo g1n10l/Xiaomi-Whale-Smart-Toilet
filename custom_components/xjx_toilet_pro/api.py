@@ -36,6 +36,8 @@ class ToiletlidStatus:
 class XjxToiletProClient(Device):
     """Synchronous python-miio client for xjx.toilet.pro."""
 
+    _supported_models = list(AVAILABLE_PROPERTIES)
+
     def __init__(self, ip: str, token: str, model: str = MODEL_XJX_TOILET_PRO) -> None:
         super().__init__(ip, token, model=model)
         self._model = model if model in AVAILABLE_PROPERTIES else MODEL_XJX_TOILET_PRO
