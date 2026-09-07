@@ -69,7 +69,7 @@ class XjxToiletProClient(Device):
     def set_warm_air_drying(self, state: bool) -> Any:
         """Start or stop warm-air drying."""
         if state:
-            return self.send("warmdry_on")
+            return self.send("warm_dry_on")
         return self.send("func_off", ["warm_dry"])
 
     def set_fan_temperature(self, level: int) -> Any:
