@@ -99,10 +99,17 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the feature on."""
-        func = getattr(self.coordinator.client, self.entity_description.command_name)
-        await self.coordinator.async_execute(func, True)
+        await self._async_set_state(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the feature off."""
+        await self._async_set_state(False)
+
+    async def _async_set_state(self, state: bool) -> None:
+        """Set and verify the switch state."""
         func = getattr(self.coordinator.client, self.entity_description.command_name)
-        await self.coordinator.async_execute(func, False)
+        await self.coordinator.async_execute(
+            func,
+            state,
+            verify=lambda status: self.entity_description.value_fn(status) is state,
+        )

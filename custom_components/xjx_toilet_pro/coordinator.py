@@ -39,11 +39,27 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
                 f"Unable to communicate with the toilet cover: {err}"
             ) from err
 
-    async def async_execute(self, func: Callable[..., Any], *args: Any) -> Any:
+    async def async_execute(
+        self,
+        func: Callable[..., Any],
+        *args: Any,
+        verify: Callable[[ToiletlidStatus], bool] | None = None,
+    ) -> Any:
         """Run a blocking miIO command and refresh state."""
         try:
             result = await self.hass.async_add_executor_job(func, *args)
         except DeviceException as err:
+            if verify is not None:
+                await self.async_request_refresh()
+                if (
+                    self.last_update_success
+                    and self.data is not None
+                    and verify(self.data)
+                ):
+                    _LOGGER.debug(
+                        "Device reported a command error, but the requested state was set"
+                    )
+                    return None
             raise UpdateFailed(
                 f"Unable to send command to the toilet cover: {err}"
             ) from err
