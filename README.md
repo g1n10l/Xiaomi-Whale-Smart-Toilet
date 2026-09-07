@@ -15,8 +15,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Air filter status binary sensor
 - Night LED switch
 - Self-cleaning switch
-- Warm-air drying switch
-- Warm-air drying temperature selector (low, medium and high)
+- Experimental warm-air drying switch
+- Experimental warm-air temperature selector (low, medium and high)
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -53,6 +53,27 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
    ```
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
+
+## Experimental warm-air controls
+
+Warm-air drying support is experimental and has not yet been confirmed on a
+physical `xjx.toilet.pro` device. Different firmware revisions may reject the
+commands or expose their state only while drying is active.
+
+The **Warm-air drying** switch starts drying with `warmdry_on` and stops it with
+`func_off ["warmdry"]`. Its state comes from the `status_warmdry` property. The
+toilet cover should allow drying only while the seat is occupied and stop it
+automatically after about two minutes.
+
+The **Warm-air temperature** selector uses `set_fan_temp` with these levels:
+
+- Low: level 1, approximately 36°C
+- Medium: level 2, approximately 43°C
+- High: level 3, approximately 50°C
+
+Some firmware revisions may expose `fan_temp` only while drying is active. If
+the property cannot be read, Home Assistant retains the last level selected in
+the current integration session.
 
 ## Raw command action
 
@@ -95,17 +116,9 @@ The integration never writes the miIO token to its own logs. Review logs before 
 
 The modernization has passed static validation but has not yet been tested by the maintainer with a physical `xjx.toilet.pro` device. Please report hardware results and relevant sanitized logs through [GitHub Issues](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues).
 
-The warm-air temperature selector uses the device's `set_fan_temp` command with
-levels 1, 2 and 3. Some firmware revisions expose the corresponding `fan_temp`
-property only while drying is active. On those devices the selector retains the
-last level selected in Home Assistant until the integration is reloaded. This
-command still requires confirmation on physical hardware.
-
-The warm-air drying switch reads `status_warmdry`, starts drying with
-`warmdry_on`, and stops it with `func_off ["warmdry"]`. The toilet cover only
-allows drying while the seat is occupied and normally stops it automatically
-after about two minutes. The start command still requires confirmation on
-physical hardware.
+The warm-air controls described above need hardware testing in particular.
+Please include the command response and sanitized debug logs when reporting
+whether they work with your firmware revision.
 
 ## License and credits
 
