@@ -43,6 +43,7 @@ TEMPERATURE_SELECTS = (
         options=list(TEMPERATURE_TO_LEVEL),
         command_name="set_fan_temperature",
         remember_command_name="remember_fan_temperature",
+        active_operation="warm_air_drying",
     ),
     XjxTemperatureDescription(
         key="rear_wash_water_temperature",

@@ -80,15 +80,16 @@ returns to off when drying is stopped, three seconds after a rejected start on
 an unoccupied seat, or after the estimated two-minute drying cycle. This is an
 estimate because the device does not reliably expose `status_warmdry`.
 
-The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
+The **Warm-air temperature** selector has these levels:
 
 - Low: level 1, approximately 36°C
 - Medium: level 2, approximately 43°C
 - High: level 3, approximately 50°C
 
-The device does not reliably report `fan_temp`, so Home Assistant stores the
-last selected level and restores it after a restart. New entities start at the
-medium level.
+The device does not reliably report `fan_temp`, so Home Assistant stores every
+selection and passes it to `warm_dry_on` when drying starts. While drying is
+active, the selector also sends `set_fan_temp` to apply the change immediately.
+New entities start at the medium level.
 
 ## Rear wash
 
