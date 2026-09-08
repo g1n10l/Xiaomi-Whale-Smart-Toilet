@@ -18,9 +18,9 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Experimental warm-air drying switch
 - Estimated warm-air drying binary sensor
 - Experimental warm-air temperature selector with three levels
-- Experimental bidet switch
-- Estimated bidet-state binary sensor
-- Experimental bidet water-temperature selector with three levels
+- Experimental rear-wash switch
+- Estimated rear-wash binary sensor
+- Experimental rear-wash water-temperature selector with three levels
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -81,20 +81,20 @@ The device does not reliably report `fan_temp`, so Home Assistant stores the
 last selected level and restores it after a restart. New entities start at the
 medium level.
 
-## Bidet
+## Rear wash
 
-The **Bidet** switch starts washing with `tun_wash_on`. It sends the last
+The **Rear wash** switch starts washing with `tun_wash_on`. It sends the last
 selected water temperature, medium water pressure, the middle nozzle position,
 oscillation enabled and massage disabled. It stops washing with
 `func_off ["tun_wash"]`. If the seat remains unoccupied, the switch returns to
 off after three seconds.
 
-The **Estimated bidet state** binary sensor mirrors the bidet switch. It
+The **Estimated rear-wash state** binary sensor mirrors the rear-wash switch. It
 returns to off when washing is stopped, three seconds after a rejected start
 on an unoccupied seat, or after the estimated two-minute wash cycle. This is
 an estimate because the device does not reliably expose `status_tunwash`.
 
-The **Bidet water temperature** selector sends `set_water_temp_t` with
+The **Rear-wash water temperature** selector sends `set_water_temp_t` with
 three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).
 Home Assistant stores the last selection and sends it whenever rear washing
 starts. New entities start at the medium level. The device may require the seat

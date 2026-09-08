@@ -46,13 +46,13 @@
       "occupied": {"name": "Occupied"},
       "air_filter": {"name": "Air filter"},
       "warm_air_drying_status": {"name": "Estimated warm-air drying"},
-      "rear_wash_status": {"name": "Estimated bidet state"}
+      "rear_wash_status": {"name": "Estimated rear-wash state"}
     },
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},
       "warm_air_drying": {"name": "Warm-air drying"},
-      "rear_wash": {"name": "Bidet"}
+      "rear_wash": {"name": "Rear wash"}
     },
     "select": {
       "fan_temperature": {
@@ -64,7 +64,7 @@
         }
       },
       "rear_wash_water_temperature": {
-        "name": "Bidet water temperature",
+        "name": "Rear-wash water temperature",
         "state": {
           "low": "Low (about 35°C)",
           "medium": "Medium (about 37°C)",

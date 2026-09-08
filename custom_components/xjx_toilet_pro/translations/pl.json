@@ -46,13 +46,13 @@
       "occupied": {"name": "Zajęta"},
       "air_filter": {"name": "Filtr powietrza"},
       "warm_air_drying_status": {"name": "Szacowany stan suszenia"},
-      "rear_wash_status": {"name": "Szacowany stan bidetu"}
+      "rear_wash_status": {"name": "Szacowany stan mycia tylnego"}
     },
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},
       "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"},
-      "rear_wash": {"name": "Bidet"}
+      "rear_wash": {"name": "Mycie tylne"}
     },
     "select": {
       "fan_temperature": {
@@ -64,7 +64,7 @@
         }
       },
       "rear_wash_water_temperature": {
-        "name": "Temperatura wody, bidet",
+        "name": "Temperatura wody, mycie tylne",
         "state": {
           "low": "Niska (około 35°C)",
           "medium": "Średnia (około 37°C)",
