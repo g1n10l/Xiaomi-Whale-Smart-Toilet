@@ -57,7 +57,7 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
                     and verify(self.data)
                 ):
                     _LOGGER.debug(
-                        "Device reported a command error, but the requested state was set"
+                        "Device reported a command error, but it applied the state"
                     )
                     return None
             raise UpdateFailed(

@@ -10,6 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
+from .api import DEFAULT_TEMPERATURE_LEVEL
 from .const import (
     CONF_MAC,
     CONF_MODEL,
@@ -26,11 +27,11 @@ LEVEL_TO_TEMPERATURE = {
     level: option for option, level in TEMPERATURE_TO_LEVEL.items()
 }
 
+
 @dataclass(frozen=True, kw_only=True)
 class XjxTemperatureDescription(SelectEntityDescription):
     """Describe an optimistic temperature selector."""
 
-    status_attribute: str
     command_name: str
     remember_command_name: str
 
@@ -41,7 +42,6 @@ TEMPERATURE_SELECTS = (
         translation_key="fan_temperature",
         icon="mdi:heat-wave",
         options=list(TEMPERATURE_TO_LEVEL),
-        status_attribute="fan_temperature",
         command_name="set_fan_temperature",
         remember_command_name="remember_fan_temperature",
     ),
@@ -50,7 +50,6 @@ TEMPERATURE_SELECTS = (
         translation_key="rear_wash_water_temperature",
         icon="mdi:thermometer-water",
         options=list(TEMPERATURE_TO_LEVEL),
-        status_attribute="rear_wash_water_temperature",
         command_name="set_rear_wash_water_temperature",
         remember_command_name="remember_rear_wash_water_temperature",
     ),
@@ -100,7 +99,7 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
             unique_suffix=description.key,
         )
         self.entity_description = description
-        self._selected_level: int | None = None
+        self._selected_level = DEFAULT_TEMPERATURE_LEVEL
 
     async def async_added_to_hass(self) -> None:
         """Restore the last selected temperature."""
@@ -119,16 +118,7 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
     @property
     def current_option(self) -> str | None:
         """Return the selected temperature level."""
-        level = (
-            getattr(
-                self.coordinator.data,
-                self.entity_description.status_attribute,
-            )
-            if self.coordinator.data is not None
-            else None
-        )
-        level = level or self._selected_level
-        return LEVEL_TO_TEMPERATURE.get(level)
+        return LEVEL_TO_TEMPERATURE[self._selected_level]
 
     async def async_select_option(self, option: str) -> None:
         """Set the temperature level."""

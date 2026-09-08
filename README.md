@@ -70,7 +70,8 @@ The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 - High: level 3, approximately 50°C
 
 The device does not reliably report `fan_temp`, so Home Assistant stores the
-last selected level and restores it after a restart.
+last selected level and restores it after a restart. New entities start at the
+medium level.
 
 ## Bidet
 
@@ -82,8 +83,8 @@ oscillation enabled and massage disabled. It stops washing with
 The **Bidet water temperature** selector sends `set_water_temp_t` with
 three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).
 Home Assistant stores the last selection and sends it whenever rear washing
-starts. The device may require the seat to be occupied before it accepts the
-start command.
+starts. New entities start at the medium level. The device may require the seat
+to be occupied before it accepts the start command.
 
 ## Raw command action
 
