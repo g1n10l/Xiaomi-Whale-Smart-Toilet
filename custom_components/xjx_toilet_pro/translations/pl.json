@@ -48,6 +48,9 @@
       "warm_air_drying_status": {"name": "Status suszenia"},
       "rear_wash_status": {"name": "Status mycia tylnego"}
     },
+    "sensor": {
+      "water_filter_days_remaining": {"name": "Pozostałe dni filtra wody"}
+    },
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},

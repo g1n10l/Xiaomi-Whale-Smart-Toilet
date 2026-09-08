@@ -48,6 +48,9 @@
       "warm_air_drying_status": {"name": "Estimated warm-air drying"},
       "rear_wash_status": {"name": "Estimated rear-wash state"}
     },
+    "sensor": {
+      "water_filter_days_remaining": {"name": "Water filter days remaining"}
+    },
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},

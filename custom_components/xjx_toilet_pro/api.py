@@ -15,6 +15,7 @@ AVAILABLE_PROPERTIES: dict[str, list[str]] = {
         "status_airfilter",
         "status_led",
         "status_selfclean",
+        "left_day",
     ]
 }
 
@@ -33,6 +34,7 @@ class ToiletlidStatus:
     air_filter: bool
     led: bool
     self_clean: bool
+    water_filter_days_remaining: int | None
 
 
 class XjxToiletProClient(Device):
@@ -56,6 +58,9 @@ class XjxToiletProClient(Device):
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
+            water_filter_days_remaining=_decode_remaining_days(
+                data.get("left_day")
+            ),
         )
 
     def set_self_clean(self, state: bool) -> Any:
@@ -140,3 +145,12 @@ def _validate_temperature_level(level: int) -> None:
     """Validate a three-level temperature setting."""
     if level not in (1, 2, 3):
         raise ValueError("Temperature level must be 1, 2 or 3")
+
+
+def _decode_remaining_days(value: Any) -> int | None:
+    """Decode the device's 1000-offset remaining-days value."""
+    try:
+        encoded_days = int(value)
+    except (TypeError, ValueError):
+        return None
+    return encoded_days - 1000 if encoded_days >= 1000 else None

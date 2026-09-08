@@ -13,6 +13,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Local polling every 30 seconds
 - Seat occupancy binary sensor
 - Air filter status binary sensor
+- Water-filter remaining-days sensor
 - Night LED switch
 - Self-cleaning switch
 - Experimental warm-air drying switch
@@ -58,6 +59,13 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
    ```
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
+
+## Water filter
+
+The **Water filter days remaining** sensor reads `left_day` from the device.
+The official Mi Home plugin stores this value with an offset of 1000, so the
+integration converts `1180` to 180 days. Invalid or unsupported values appear
+as unknown instead of an incorrect negative number.
 
 ## Warm-air drying
 
