@@ -49,7 +49,8 @@
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},
-      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"}
+      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"},
+      "rear_wash": {"name": "Mycie tylne"}
     },
     "select": {
       "fan_temperature": {
@@ -58,6 +59,14 @@
           "low": "Niska (około 36°C)",
           "medium": "Średnia (około 43°C)",
           "high": "Wysoka (około 50°C)"
+        }
+      },
+      "rear_wash_water_temperature": {
+        "name": "Temperatura wody, mycie tylne",
+        "state": {
+          "low": "Niska (około 35°C)",
+          "medium": "Średnia (około 37°C)",
+          "high": "Wysoka (około 39°C)"
         }
       }
     }

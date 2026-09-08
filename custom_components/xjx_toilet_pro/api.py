@@ -19,6 +19,9 @@ AVAILABLE_PROPERTIES: dict[str, list[str]] = {
 }
 
 DEFAULT_FAN_TEMPERATURE_LEVEL = 2
+DEFAULT_REAR_WASH_WATER_TEMPERATURE_LEVEL = 2
+DEFAULT_REAR_WASH_WATER_STRENGTH_LEVEL = 2
+DEFAULT_REAR_WASH_NOZZLE_POSITION = 2
 
 
 @dataclass(slots=True)
@@ -30,7 +33,9 @@ class ToiletlidStatus:
     led: bool
     self_clean: bool
     warm_air_drying: bool | None
+    rear_wash: bool | None
     fan_temperature: int | None
+    rear_wash_water_temperature: int | None
 
 
 class XjxToiletProClient(Device):
@@ -42,6 +47,9 @@ class XjxToiletProClient(Device):
         super().__init__(ip, token, model=model)
         self._model = model if model in AVAILABLE_PROPERTIES else MODEL_XJX_TOILET_PRO
         self._fan_temperature_level = DEFAULT_FAN_TEMPERATURE_LEVEL
+        self._rear_wash_water_temperature_level = (
+            DEFAULT_REAR_WASH_WATER_TEMPERATURE_LEVEL
+        )
 
     def status(self) -> ToiletlidStatus:
         """Retrieve and parse device properties."""
@@ -54,7 +62,9 @@ class XjxToiletProClient(Device):
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
             warm_air_drying=None,
+            rear_wash=None,
             fan_temperature=None,
+            rear_wash_water_temperature=None,
         )
 
     def set_self_clean(self, state: bool) -> Any:
@@ -82,14 +92,46 @@ class XjxToiletProClient(Device):
         self._fan_temperature_level = level
         return result
 
+    def set_rear_wash(self, state: bool) -> Any:
+        """Start or stop rear washing."""
+        if state:
+            return self.send(
+                "tun_wash_on",
+                [
+                    self._rear_wash_water_temperature_level,
+                    DEFAULT_REAR_WASH_WATER_STRENGTH_LEVEL,
+                    DEFAULT_REAR_WASH_NOZZLE_POSITION,
+                    1,
+                    0,
+                ],
+            )
+        return self.send("func_off", ["tun_wash"])
+
+    def set_rear_wash_water_temperature(self, level: int) -> Any:
+        """Set the rear-wash water temperature level."""
+        self._validate_temperature_level(level)
+        result = self.send("set_water_temp_t", [level])
+        self._rear_wash_water_temperature_level = level
+        return result
+
     def remember_fan_temperature(self, level: int) -> None:
         """Remember a temperature level without sending a command."""
         self._validate_fan_temperature(level)
         self._fan_temperature_level = level
 
+    def remember_rear_wash_water_temperature(self, level: int) -> None:
+        """Remember a rear-wash water temperature without sending a command."""
+        self._validate_temperature_level(level)
+        self._rear_wash_water_temperature_level = level
+
     @staticmethod
     def _validate_fan_temperature(level: int) -> None:
         """Validate a warm-air temperature level."""
+        XjxToiletProClient._validate_temperature_level(level)
+
+    @staticmethod
+    def _validate_temperature_level(level: int) -> None:
+        """Validate a three-level temperature setting."""
         if level not in (1, 2, 3):
             raise ValueError("Temperature level must be 1, 2 or 3")
 

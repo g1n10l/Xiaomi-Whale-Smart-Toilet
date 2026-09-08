@@ -49,7 +49,8 @@
     "switch": {
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},
-      "warm_air_drying": {"name": "Warm-air drying"}
+      "warm_air_drying": {"name": "Warm-air drying"},
+      "rear_wash": {"name": "Rear wash"}
     },
     "select": {
       "fan_temperature": {
@@ -58,6 +59,14 @@
           "low": "Low (about 36°C)",
           "medium": "Medium (about 43°C)",
           "high": "High (about 50°C)"
+        }
+      },
+      "rear_wash_water_temperature": {
+        "name": "Rear-wash water temperature",
+        "state": {
+          "low": "Low (about 35°C)",
+          "medium": "Medium (about 37°C)",
+          "high": "High (about 39°C)"
         }
       }
     }

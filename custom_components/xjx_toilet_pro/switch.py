@@ -56,6 +56,14 @@ SWITCHES = (
         command_name="set_warm_air_drying",
         optimistic=True,
     ),
+    XjxSwitchDescription(
+        key="rear_wash",
+        translation_key="rear_wash",
+        icon="mdi:shower-head",
+        value_fn=lambda status: status.rear_wash,
+        command_name="set_rear_wash",
+        optimistic=True,
+    ),
 )
 
 
