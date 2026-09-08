@@ -50,7 +50,6 @@ SWITCHES = (
         icon="mdi:spray-bottle",
         value_fn=lambda status: status.self_clean,
         command_name="set_self_clean",
-        reset_when_unoccupied=True,
     ),
     XjxSwitchDescription(
         key="warm_air_drying",
