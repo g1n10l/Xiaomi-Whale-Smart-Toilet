@@ -9,13 +9,13 @@ from miio import Device
 
 from .const import MODEL_XJX_TOILET_PRO
 
-AVAILABLE_PROPERTIES = (
+AVAILABLE_PROPERTIES: list[str] = [
     "seating",
     "status_airfilter",
     "status_led",
     "status_selfclean",
     "left_day",
-)
+]
 
 DEFAULT_TEMPERATURE_LEVEL = 2
 DEFAULT_REAR_WASH_STRENGTH = 2
