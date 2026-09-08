@@ -45,7 +45,7 @@
     "binary_sensor": {
       "occupied": {"name": "Zajęta"},
       "air_filter": {"name": "Filtr powietrza"},
-      "warm_air_drying_status": {"name": "Szacowany stan suszenia"},
+      "warm_air_drying_status": {"name": "Status suszenia"},
       "rear_wash_status": {"name": "Status mycia tylnego"}
     },
     "switch": {
