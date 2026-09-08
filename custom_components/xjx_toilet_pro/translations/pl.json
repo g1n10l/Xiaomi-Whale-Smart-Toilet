@@ -50,7 +50,7 @@
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},
       "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"},
-      "rear_wash": {"name": "Mycie tylne"}
+      "rear_wash": {"name": "Bidet"}
     },
     "select": {
       "fan_temperature": {
@@ -62,7 +62,7 @@
         }
       },
       "rear_wash_water_temperature": {
-        "name": "Temperatura wody, mycie tylne",
+        "name": "Temperatura wody, bidet",
         "state": {
           "low": "Niska (około 35°C)",
           "medium": "Średnia (około 37°C)",

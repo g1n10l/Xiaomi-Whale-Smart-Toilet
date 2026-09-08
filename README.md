@@ -17,8 +17,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Self-cleaning switch
 - Experimental warm-air drying switch
 - Experimental warm-air temperature selector with three levels
-- Experimental rear-wash switch
-- Experimental rear-wash water-temperature selector with three levels
+- Experimental bidet switch
+- Experimental bidet water-temperature selector with three levels
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
 
@@ -72,14 +72,14 @@ The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 The device does not reliably report `fan_temp`, so Home Assistant stores the
 last selected level and restores it after a restart.
 
-## Rear wash
+## Bidet
 
-The **Rear wash** switch starts washing with `tun_wash_on`. It sends the last
+The **Bidet** switch starts washing with `tun_wash_on`. It sends the last
 selected water temperature, medium water pressure, the middle nozzle position,
 oscillation enabled and massage disabled. It stops washing with
 `func_off ["tun_wash"]`.
 
-The **Rear-wash water temperature** selector sends `set_water_temp_t` with
+The **Bidet water temperature** selector sends `set_water_temp_t` with
 three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).
 Home Assistant stores the last selection and sends it whenever rear washing
 starts. The device may require the seat to be occupied before it accepts the

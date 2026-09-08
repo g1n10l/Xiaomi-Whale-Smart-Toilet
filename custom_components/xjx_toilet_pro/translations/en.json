@@ -50,7 +50,7 @@
       "led": {"name": "Night LED"},
       "self_clean": {"name": "Self-cleaning"},
       "warm_air_drying": {"name": "Warm-air drying"},
-      "rear_wash": {"name": "Rear wash"}
+      "rear_wash": {"name": "Bidet"}
     },
     "select": {
       "fan_temperature": {
@@ -62,7 +62,7 @@
         }
       },
       "rear_wash_water_temperature": {
-        "name": "Rear-wash water temperature",
+        "name": "Bidet water temperature",
         "state": {
           "low": "Low (about 35°C)",
           "medium": "Medium (about 37°C)",
