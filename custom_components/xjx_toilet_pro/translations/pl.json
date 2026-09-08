@@ -54,7 +54,7 @@
     "switch": {
       "led": {"name": "Oświetlenie nocne"},
       "self_clean": {"name": "Samooczyszczanie"},
-      "warm_air_drying": {"name": "Suszenie ciepłym powietrzem"},
+      "warm_air_drying": {"name": "Suszenie"},
       "rear_wash": {"name": "Mycie tylne"}
     },
     "select": {
