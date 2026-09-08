@@ -14,7 +14,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Seat occupancy binary sensor
 - Air filter status binary sensor
 - Night LED switch
-- Self-cleaning switch
+- Self-cleaning switch with automatic inactive-seat reset
 - Experimental warm-air drying switch
 - Experimental warm-air temperature selector with three levels
 - Experimental bidet switch
@@ -55,6 +55,13 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
    ```
 
 3. Install this version, restart Home Assistant, and configure the device through the interface.
+
+## Self-cleaning
+
+The **Self-cleaning** switch checks the seat occupancy three seconds after it
+starts. If the seat is unoccupied and the device still reports self-cleaning
+as active, the integration sends the stop command and the switch returns to
+off.
 
 ## Warm-air drying
 

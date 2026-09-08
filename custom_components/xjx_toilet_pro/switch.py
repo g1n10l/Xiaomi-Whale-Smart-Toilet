@@ -8,7 +8,7 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_call_later
 
@@ -33,6 +33,7 @@ class XjxSwitchDescription(SwitchEntityDescription):
     value_fn: Callable[[ToiletlidStatus], bool | None]
     command_name: str
     optimistic: bool = False
+    reset_when_unoccupied: bool = False
 
 
 SWITCHES = (
@@ -49,6 +50,7 @@ SWITCHES = (
         icon="mdi:spray-bottle",
         value_fn=lambda status: status.self_clean,
         command_name="set_self_clean",
+        reset_when_unoccupied=True,
     ),
     XjxSwitchDescription(
         key="warm_air_drying",
@@ -57,6 +59,7 @@ SWITCHES = (
         value_fn=lambda status: status.warm_air_drying,
         command_name="set_warm_air_drying",
         optimistic=True,
+        reset_when_unoccupied=True,
     ),
     XjxSwitchDescription(
         key="rear_wash",
@@ -65,6 +68,7 @@ SWITCHES = (
         value_fn=lambda status: status.rear_wash,
         command_name="set_rear_wash",
         optimistic=True,
+        reset_when_unoccupied=True,
     ),
 )
 
@@ -109,6 +113,7 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
         )
         self.entity_description = description
         self._optimistic_state: bool | None = None
+        self._last_requested_state = False
         self._cancel_inactive_reset: Callable[[], None] | None = None
 
     @property
@@ -144,25 +149,33 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
                 else lambda status: self.entity_description.value_fn(status) is state
             ),
         )
+        self._cancel_pending_inactive_reset()
+        self._last_requested_state = state
         if self.entity_description.optimistic:
-            self._cancel_pending_inactive_reset()
             self._optimistic_state = state
             self.async_write_ha_state()
-            if state:
-                self._cancel_inactive_reset = async_call_later(
-                    self.hass,
-                    INACTIVE_SWITCH_RESET_SECONDS,
-                    self._reset_if_unoccupied,
-                )
+        if state and self.entity_description.reset_when_unoccupied:
+            self._cancel_inactive_reset = async_call_later(
+                self.hass,
+                INACTIVE_SWITCH_RESET_SECONDS,
+                self._reset_if_unoccupied,
+            )
 
-    @callback
-    def _reset_if_unoccupied(self, _now: Any) -> None:
-        """Reset the displayed state when the seat remains unoccupied."""
+    async def _reset_if_unoccupied(self, _now: Any) -> None:
+        """Reset a requested state when the seat remains unoccupied."""
         self._cancel_inactive_reset = None
         status = self.coordinator.data
-        if self._optimistic_state and (status is None or not status.seating):
+        if not self._last_requested_state or (status is not None and status.seating):
+            return
+
+        if self.entity_description.optimistic:
+            self._last_requested_state = False
             self._optimistic_state = False
             self.async_write_ha_state()
+        elif status is not None and self.entity_description.value_fn(status):
+            await self._async_set_state(False)
+        else:
+            self._last_requested_state = False
 
     def _cancel_pending_inactive_reset(self) -> None:
         """Cancel the pending inactive-seat check."""
