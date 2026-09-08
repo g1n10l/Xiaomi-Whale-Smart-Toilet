@@ -61,7 +61,8 @@ Copy `custom_components/xjx_toilet_pro` to `/config/custom_components/xjx_toilet
 The **Warm-air drying** switch starts drying with `warm_dry_on` and the last
 selected temperature level. It stops drying with `func_off ["warm_dry"]`. The
 device does not reliably report the drying state, so Home Assistant displays
-the last state requested during the current integration session.
+the last state requested during the current integration session. If the seat
+remains unoccupied, the switch returns to off after three seconds.
 
 The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 
@@ -78,7 +79,8 @@ medium level.
 The **Bidet** switch starts washing with `tun_wash_on`. It sends the last
 selected water temperature, medium water pressure, the middle nozzle position,
 oscillation enabled and massage disabled. It stops washing with
-`func_off ["tun_wash"]`.
+`func_off ["tun_wash"]`. If the seat remains unoccupied, the switch returns to
+off after three seconds.
 
 The **Bidet water temperature** selector sends `set_water_temp_t` with
 three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).

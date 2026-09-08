@@ -8,8 +8,9 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.event import async_call_later
 
 from .api import ToiletlidStatus
 from .const import (
@@ -18,6 +19,7 @@ from .const import (
     DATA_COORDINATOR,
     DEFAULT_NAME,
     DOMAIN,
+    INACTIVE_SWITCH_RESET_SECONDS,
     MODEL_XJX_TOILET_PRO,
 )
 from .coordinator import XjxToiletProCoordinator
@@ -107,6 +109,7 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
         )
         self.entity_description = description
         self._optimistic_state: bool | None = None
+        self._cancel_inactive_reset: Callable[[], None] | None = None
 
     @property
     def is_on(self) -> bool | None:
@@ -124,6 +127,11 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
         """Turn the feature off."""
         await self._async_set_state(False)
 
+    async def async_will_remove_from_hass(self) -> None:
+        """Cancel a pending inactive-seat check before removal."""
+        self._cancel_pending_inactive_reset()
+        await super().async_will_remove_from_hass()
+
     async def _async_set_state(self, state: bool) -> None:
         """Set and verify the switch state."""
         func = getattr(self.coordinator.client, self.entity_description.command_name)
@@ -137,5 +145,27 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
             ),
         )
         if self.entity_description.optimistic:
+            self._cancel_pending_inactive_reset()
             self._optimistic_state = state
             self.async_write_ha_state()
+            if state:
+                self._cancel_inactive_reset = async_call_later(
+                    self.hass,
+                    INACTIVE_SWITCH_RESET_SECONDS,
+                    self._reset_if_unoccupied,
+                )
+
+    @callback
+    def _reset_if_unoccupied(self, _now: Any) -> None:
+        """Reset the displayed state when the seat remains unoccupied."""
+        self._cancel_inactive_reset = None
+        status = self.coordinator.data
+        if self._optimistic_state and (status is None or not status.seating):
+            self._optimistic_state = False
+            self.async_write_ha_state()
+
+    def _cancel_pending_inactive_reset(self) -> None:
+        """Cancel the pending inactive-seat check."""
+        if self._cancel_inactive_reset is not None:
+            self._cancel_inactive_reset()
+            self._cancel_inactive_reset = None
