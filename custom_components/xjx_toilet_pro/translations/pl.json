@@ -72,5 +72,25 @@
         }
       }
     }
+  },
+  "services": {
+    "send_command": {
+      "name": "Wyślij surową komendę",
+      "description": "Wyślij surową komendę miIO do deski sedesowej.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Wpis integracji",
+          "description": "Wpis integracji deski sedesowej, którą chcesz sterować."
+        },
+        "command": {
+          "name": "Komenda",
+          "description": "Nazwa surowej komendy miIO."
+        },
+        "params": {
+          "name": "Parametry",
+          "description": "Opcjonalna lista lub słownik parametrów komendy."
+        }
+      }
+    }
   }
 }

@@ -72,5 +72,25 @@
         }
       }
     }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send raw command",
+      "description": "Send a raw miIO command to the toilet cover.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Integration entry",
+          "description": "Integration entry of the toilet cover to control."
+        },
+        "command": {
+          "name": "Command",
+          "description": "Raw miIO command name."
+        },
+        "params": {
+          "name": "Parameters",
+          "description": "Optional list or dictionary of command parameters."
+        }
+      }
+    }
   }
 }
