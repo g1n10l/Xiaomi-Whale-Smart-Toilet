@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
@@ -10,7 +11,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .api import DEFAULT_TEMPERATURE_LEVEL
 from .const import (
     CONF_MAC,
     CONF_MODEL,
@@ -22,8 +22,9 @@ from .const import (
 from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
 
-TEMPERATURE_TO_LEVEL = {"low": 1, "medium": 2, "high": 3}
-LEVEL_TO_TEMPERATURE = {level: option for option, level in TEMPERATURE_TO_LEVEL.items()}
+DEFAULT_TEMPERATURE_OPTION = "medium"
+FAN_TEMPERATURES = {"low": 36, "medium": 43, "high": 50}
+REAR_WASH_WATER_TEMPERATURES = {"low": 35, "medium": 37, "high": 39}
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -32,6 +33,7 @@ class XjxTemperatureDescription(SelectEntityDescription):
 
     command_name: str
     remember_command_name: str
+    temperatures: Mapping[str, int]
     active_operation: str | None = None
 
 
@@ -40,18 +42,20 @@ TEMPERATURE_SELECTS = (
         key="fan_temperature",
         translation_key="fan_temperature",
         icon="mdi:heat-wave",
-        options=list(TEMPERATURE_TO_LEVEL),
+        options=list(FAN_TEMPERATURES),
         command_name="set_fan_temperature",
         remember_command_name="remember_fan_temperature",
+        temperatures=FAN_TEMPERATURES,
         active_operation="warm_air_drying",
     ),
     XjxTemperatureDescription(
         key="rear_wash_water_temperature",
         translation_key="rear_wash_water_temperature",
         icon="mdi:thermometer-water",
-        options=list(TEMPERATURE_TO_LEVEL),
+        options=list(REAR_WASH_WATER_TEMPERATURES),
         command_name="set_rear_wash_water_temperature",
         remember_command_name="remember_rear_wash_water_temperature",
+        temperatures=REAR_WASH_WATER_TEMPERATURES,
         active_operation="rear_wash",
     ),
 )
@@ -100,35 +104,35 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
             unique_suffix=description.key,
         )
         self.entity_description = description
-        self._selected_level = DEFAULT_TEMPERATURE_LEVEL
+        self._selected_option = DEFAULT_TEMPERATURE_OPTION
 
     async def async_added_to_hass(self) -> None:
         """Restore the last selected temperature."""
         await super().async_added_to_hass()
         if (
             last_state := await self.async_get_last_state()
-        ) is not None and last_state.state in TEMPERATURE_TO_LEVEL:
-            self._selected_level = TEMPERATURE_TO_LEVEL[last_state.state]
+        ) is not None and last_state.state in self.entity_description.temperatures:
+            self._selected_option = last_state.state
             remember = getattr(
                 self.coordinator.client,
                 self.entity_description.remember_command_name,
             )
-            remember(self._selected_level)
+            remember(self.entity_description.temperatures[self._selected_option])
 
     @property
     def current_option(self) -> str | None:
         """Return the selected temperature level."""
-        return LEVEL_TO_TEMPERATURE[self._selected_level]
+        return self._selected_option
 
     async def async_select_option(self, option: str) -> None:
         """Set the temperature level."""
-        level = TEMPERATURE_TO_LEVEL[option]
+        temperature = self.entity_description.temperatures[option]
         remember = getattr(
             self.coordinator.client,
             self.entity_description.remember_command_name,
         )
-        remember(level)
-        self._selected_level = level
+        remember(temperature)
+        self._selected_option = option
         self.async_write_ha_state()
 
         active_operation = self.entity_description.active_operation
@@ -139,4 +143,4 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
             self.coordinator.client,
             self.entity_description.command_name,
         )
-        await self.coordinator.async_execute(command, level)
+        await self.coordinator.async_execute(command, temperature)

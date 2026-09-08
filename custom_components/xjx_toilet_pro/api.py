@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 from miio import Device
 
@@ -17,7 +17,8 @@ AVAILABLE_PROPERTIES: list[str] = [
     "left_day",
 ]
 
-DEFAULT_TEMPERATURE_LEVEL = 2
+DEFAULT_FAN_TEMPERATURE = 43
+DEFAULT_REAR_WASH_WATER_TEMPERATURE = 37
 DEFAULT_REAR_WASH_STRENGTH = 2
 DEFAULT_REAR_WASH_POSITION = 2
 DEFAULT_REAR_WASH_MOVING = 1
@@ -38,15 +39,15 @@ class ToiletLidStatus:
 class XjxToiletProClient(Device):
     """Synchronous python-miio client for xjx.toilet.pro."""
 
-    _supported_models = [MODEL_XJX_TOILET_PRO]
+    _supported_models: ClassVar[list[str]] = [MODEL_XJX_TOILET_PRO]
 
     def __init__(self, ip: str, token: str, model: str = MODEL_XJX_TOILET_PRO) -> None:
         supported_model = (
             model if model == MODEL_XJX_TOILET_PRO else MODEL_XJX_TOILET_PRO
         )
         super().__init__(ip, token, model=supported_model)
-        self._fan_temperature_level = DEFAULT_TEMPERATURE_LEVEL
-        self._rear_wash_water_temperature_level = DEFAULT_TEMPERATURE_LEVEL
+        self._fan_temperature = DEFAULT_FAN_TEMPERATURE
+        self._rear_wash_water_temperature = DEFAULT_REAR_WASH_WATER_TEMPERATURE
 
     def status(self) -> ToiletLidStatus:
         """Retrieve and parse device properties."""
@@ -57,9 +58,7 @@ class XjxToiletProClient(Device):
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
-            water_filter_days_remaining=_decode_remaining_days(
-                data.get("left_day")
-            ),
+            water_filter_days_remaining=_decode_remaining_days(data.get("left_day")),
         )
 
     def set_self_clean(self, state: bool) -> Any:
@@ -77,14 +76,14 @@ class XjxToiletProClient(Device):
     def set_warm_air_drying(self, state: bool) -> Any:
         """Start or stop warm-air drying."""
         if state:
-            return self.send("warm_dry_on", [self._fan_temperature_level])
+            return self.send("warm_dry_on", [self._fan_temperature])
         return self.send("func_off", ["warm_dry"])
 
-    def set_fan_temperature(self, level: int) -> Any:
-        """Set the warm-air temperature level."""
-        _validate_temperature_level(level)
-        result = self.send("set_fan_temp", [level])
-        self._fan_temperature_level = level
+    def set_fan_temperature(self, temperature: int) -> Any:
+        """Set the warm-air temperature."""
+        _validate_temperature(temperature, (36, 43, 50))
+        result = self.send("set_fan_temp", [temperature])
+        self._fan_temperature = temperature
         return result
 
     def set_rear_wash(self, state: bool) -> Any:
@@ -93,7 +92,7 @@ class XjxToiletProClient(Device):
             return self.send(
                 "tun_wash_on",
                 [
-                    self._rear_wash_water_temperature_level,
+                    self._rear_wash_water_temperature,
                     DEFAULT_REAR_WASH_STRENGTH,
                     DEFAULT_REAR_WASH_POSITION,
                     DEFAULT_REAR_WASH_MOVING,
@@ -102,22 +101,22 @@ class XjxToiletProClient(Device):
             )
         return self.send("func_off", ["tun_wash"])
 
-    def set_rear_wash_water_temperature(self, level: int) -> Any:
-        """Set the rear-wash water temperature level."""
-        _validate_temperature_level(level)
-        result = self.send("set_water_temp_t", [level])
-        self._rear_wash_water_temperature_level = level
+    def set_rear_wash_water_temperature(self, temperature: int) -> Any:
+        """Set the rear-wash water temperature."""
+        _validate_temperature(temperature, (35, 37, 39))
+        result = self.send("set_water_temp_t", [temperature])
+        self._rear_wash_water_temperature = temperature
         return result
 
-    def remember_fan_temperature(self, level: int) -> None:
-        """Remember a temperature level without sending a command."""
-        _validate_temperature_level(level)
-        self._fan_temperature_level = level
+    def remember_fan_temperature(self, temperature: int) -> None:
+        """Remember an air temperature without sending a command."""
+        _validate_temperature(temperature, (36, 43, 50))
+        self._fan_temperature = temperature
 
-    def remember_rear_wash_water_temperature(self, level: int) -> None:
-        """Remember a rear-wash water temperature without sending a command."""
-        _validate_temperature_level(level)
-        self._rear_wash_water_temperature_level = level
+    def remember_rear_wash_water_temperature(self, temperature: int) -> None:
+        """Remember a water temperature without sending a command."""
+        _validate_temperature(temperature, (35, 37, 39))
+        self._rear_wash_water_temperature = temperature
 
     def raw_command(
         self,
@@ -140,10 +139,10 @@ def _as_bool(value: Any) -> bool:
         return bool(value)
 
 
-def _validate_temperature_level(level: int) -> None:
-    """Validate a three-level temperature setting."""
-    if level not in (1, 2, 3):
-        raise ValueError("Temperature level must be 1, 2 or 3")
+def _validate_temperature(temperature: int, allowed: tuple[int, ...]) -> None:
+    """Validate a temperature supported by the device."""
+    if temperature not in allowed:
+        raise ValueError(f"Temperature must be one of: {allowed}")
 
 
 def _decode_remaining_days(value: Any) -> int | None:

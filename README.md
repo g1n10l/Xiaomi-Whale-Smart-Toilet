@@ -82,14 +82,14 @@ estimate because the device does not reliably expose `status_warmdry`.
 
 The **Warm-air temperature** selector has these levels:
 
-- Low: level 1, approximately 36°C
-- Medium: level 2, approximately 43°C
-- High: level 3, approximately 50°C
+- Low: 36°C
+- Medium: 43°C
+- High: 50°C
 
 The device does not reliably report `fan_temp`, so Home Assistant stores every
 selection and passes it to `warm_dry_on` when drying starts. While drying is
 active, the selector also sends `set_fan_temp` to apply the change immediately.
-New entities start at the medium level.
+New entities start at 43°C.
 
 ## Rear wash
 
@@ -106,10 +106,11 @@ an estimate because the device does not reliably expose `status_tunwash`.
 
 The **Rear-wash water temperature** selector has three levels: low (about 35°C),
 medium (about 37°C) and high (about 39°C). Home Assistant stores every selection
-and passes it to `tun_wash_on` when rear washing starts. While washing is active,
-the selector also sends `set_water_temp_t` to apply the change immediately. New
-entities start at the medium level. The device may require the seat to be
-occupied before it accepts the start command.
+and passes the temperature in degrees Celsius to `tun_wash_on` when rear washing
+starts. While washing is active, the selector also sends the value to
+`set_water_temp_t` to apply the change immediately. New entities start at 37°C.
+The device may require the seat to be occupied before it accepts the start
+command.
 
 ## Raw command action
 
