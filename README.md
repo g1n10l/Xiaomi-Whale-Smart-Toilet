@@ -103,11 +103,12 @@ returns to off when washing is stopped, three seconds after a rejected start
 on an unoccupied seat, or after the estimated two-minute wash cycle. This is
 an estimate because the device does not reliably expose `status_tunwash`.
 
-The **Rear-wash water temperature** selector sends `set_water_temp_t` with
-three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).
-Home Assistant stores the last selection and sends it whenever rear washing
-starts. New entities start at the medium level. The device may require the seat
-to be occupied before it accepts the start command.
+The **Rear-wash water temperature** selector has three levels: low (about 35°C),
+medium (about 37°C) and high (about 39°C). Home Assistant stores every selection
+and passes it to `tun_wash_on` when rear washing starts. While washing is active,
+the selector also sends `set_water_temp_t` to apply the change immediately. New
+entities start at the medium level. The device may require the seat to be
+occupied before it accepts the start command.
 
 ## Raw command action
 

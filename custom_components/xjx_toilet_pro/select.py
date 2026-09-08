@@ -23,9 +23,7 @@ from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
 
 TEMPERATURE_TO_LEVEL = {"low": 1, "medium": 2, "high": 3}
-LEVEL_TO_TEMPERATURE = {
-    level: option for option, level in TEMPERATURE_TO_LEVEL.items()
-}
+LEVEL_TO_TEMPERATURE = {level: option for option, level in TEMPERATURE_TO_LEVEL.items()}
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -34,6 +32,7 @@ class XjxTemperatureDescription(SelectEntityDescription):
 
     command_name: str
     remember_command_name: str
+    active_operation: str | None = None
 
 
 TEMPERATURE_SELECTS = (
@@ -52,6 +51,7 @@ TEMPERATURE_SELECTS = (
         options=list(TEMPERATURE_TO_LEVEL),
         command_name="set_rear_wash_water_temperature",
         remember_command_name="remember_rear_wash_water_temperature",
+        active_operation="rear_wash",
     ),
 )
 
@@ -105,9 +105,8 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
         """Restore the last selected temperature."""
         await super().async_added_to_hass()
         if (
-            (last_state := await self.async_get_last_state()) is not None
-            and last_state.state in TEMPERATURE_TO_LEVEL
-        ):
+            last_state := await self.async_get_last_state()
+        ) is not None and last_state.state in TEMPERATURE_TO_LEVEL:
             self._selected_level = TEMPERATURE_TO_LEVEL[last_state.state]
             remember = getattr(
                 self.coordinator.client,
@@ -123,10 +122,20 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
     async def async_select_option(self, option: str) -> None:
         """Set the temperature level."""
         level = TEMPERATURE_TO_LEVEL[option]
+        remember = getattr(
+            self.coordinator.client,
+            self.entity_description.remember_command_name,
+        )
+        remember(level)
+        self._selected_level = level
+        self.async_write_ha_state()
+
+        active_operation = self.entity_description.active_operation
+        if active_operation and not self.coordinator.estimated_state(active_operation):
+            return
+
         command = getattr(
             self.coordinator.client,
             self.entity_description.command_name,
         )
         await self.coordinator.async_execute(command, level)
-        self._selected_level = level
-        self.async_write_ha_state()
