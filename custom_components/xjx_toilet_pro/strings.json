@@ -1,9 +1,9 @@
 {
-  "title": "Xiaomi Mijia Whale Smart Toilet Cover",
+  "title": "Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)",
   "config": {
     "step": {
       "user": {
-        "title": "Connect Xiaomi Mijia Whale Smart Toilet Cover",
+        "title": "Connect Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)",
         "description": "Enter the local IP address and 32-character Xiaomi miIO token.",
         "data": {
           "host": "IP address",
@@ -17,7 +17,7 @@
         }
       },
       "reconfigure": {
-        "title": "Reconfigure Xiaomi Mijia Whale Smart Toilet Cover",
+        "title": "Reconfigure Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)",
         "description": "Update the local connection details.",
         "data": {
           "host": "IP address",

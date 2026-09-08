@@ -1,4 +1,4 @@
-# Xiaomi Mijia Whale Smart Toilet Cover
+# Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)
 
 [![HACS validation](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hacs.yaml/badge.svg)](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hacs.yaml)
 [![Hassfest](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/actions/workflows/hassfest.yaml)
@@ -35,7 +35,8 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 
 1. Open HACS and select **Custom repositories** from the menu.
 2. Add `https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet` as an **Integration** repository.
-3. Find **Xiaomi Mijia Whale Smart Toilet Cover** and select **Download**.
+3. Find **Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)** and
+   select **Download**.
 4. Restart Home Assistant.
 5. Open **Settings > Devices & services > Add integration**.
 6. Search for the integration and enter the device IP address and miIO token.

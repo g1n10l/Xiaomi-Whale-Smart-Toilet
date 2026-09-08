@@ -1,4 +1,4 @@
-# Xiaomi Mijia Whale Smart Toilet Cover
+# Home Assistant - Xiaomi-Whale-Smart-Toilet (xjx.toilet.pro)
 
 A local Home Assistant integration for `xjx.toilet.pro`.
 
