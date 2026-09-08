@@ -9,15 +9,13 @@ from miio import Device
 
 from .const import MODEL_XJX_TOILET_PRO
 
-AVAILABLE_PROPERTIES: dict[str, list[str]] = {
-    MODEL_XJX_TOILET_PRO: [
-        "seating",
-        "status_airfilter",
-        "status_led",
-        "status_selfclean",
-        "left_day",
-    ]
-}
+AVAILABLE_PROPERTIES = (
+    "seating",
+    "status_airfilter",
+    "status_led",
+    "status_selfclean",
+    "left_day",
+)
 
 DEFAULT_TEMPERATURE_LEVEL = 2
 DEFAULT_REAR_WASH_STRENGTH = 2
@@ -27,7 +25,7 @@ DEFAULT_REAR_WASH_MASSAGE = 0
 
 
 @dataclass(slots=True)
-class ToiletlidStatus:
+class ToiletLidStatus:
     """Parsed toilet-cover state."""
 
     seating: bool
@@ -40,20 +38,21 @@ class ToiletlidStatus:
 class XjxToiletProClient(Device):
     """Synchronous python-miio client for xjx.toilet.pro."""
 
-    _supported_models = list(AVAILABLE_PROPERTIES)
+    _supported_models = [MODEL_XJX_TOILET_PRO]
 
     def __init__(self, ip: str, token: str, model: str = MODEL_XJX_TOILET_PRO) -> None:
-        super().__init__(ip, token, model=model)
-        self._model = model if model in AVAILABLE_PROPERTIES else MODEL_XJX_TOILET_PRO
+        supported_model = (
+            model if model == MODEL_XJX_TOILET_PRO else MODEL_XJX_TOILET_PRO
+        )
+        super().__init__(ip, token, model=supported_model)
         self._fan_temperature_level = DEFAULT_TEMPERATURE_LEVEL
         self._rear_wash_water_temperature_level = DEFAULT_TEMPERATURE_LEVEL
 
-    def status(self) -> ToiletlidStatus:
+    def status(self) -> ToiletLidStatus:
         """Retrieve and parse device properties."""
-        properties = AVAILABLE_PROPERTIES[self._model]
-        values = self.get_properties(properties, max_properties=1)
-        data = dict(zip(properties, values, strict=False))
-        return ToiletlidStatus(
+        values = self.get_properties(AVAILABLE_PROPERTIES, max_properties=1)
+        data = dict(zip(AVAILABLE_PROPERTIES, values, strict=False))
+        return ToiletLidStatus(
             seating=_as_bool(data.get("seating")),
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),

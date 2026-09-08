@@ -50,6 +50,28 @@ SERVICE_SEND_COMMAND_SCHEMA = vol.Schema(
 )
 
 
+def _normalize_command_params(params: Any) -> Any:
+    """Normalize parameters produced by older service calls."""
+    if not (
+        isinstance(params, list)
+        and len(params) == 1
+        and isinstance(params[0], str)
+    ):
+        return params
+
+    text = params[0].strip()
+    if text.isnumeric():
+        return [int(text)]
+    if not (text.startswith("[") and text.endswith("]")):
+        return params
+
+    try:
+        parsed = ast.literal_eval(text)
+    except (SyntaxError, ValueError):
+        return params
+    return parsed if isinstance(parsed, list) else params
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up integration-level services."""
 
@@ -64,20 +86,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         coordinator: XjxToiletProCoordinator = hass.data[DOMAIN][entry_id][
             DATA_COORDINATOR
         ]
-        params: Any = call.data.get(ATTR_PARAMS)
-        # Older automations may pass a list literal as a string.
-        if isinstance(params, list) and len(params) == 1 and isinstance(params[0], str):
-            text = params[0].strip()
-            if text.startswith("[") and text.endswith("]"):
-                try:
-                    parsed = ast.literal_eval(text)
-                except (SyntaxError, ValueError):
-                    pass
-                else:
-                    if isinstance(parsed, list):
-                        params = parsed
-            elif text.isnumeric():
-                params = [int(text)]
+        params = _normalize_command_params(call.data.get(ATTR_PARAMS))
 
         try:
             await coordinator.async_execute(

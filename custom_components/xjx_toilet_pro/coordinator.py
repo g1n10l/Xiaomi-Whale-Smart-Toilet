@@ -12,13 +12,13 @@ from miio import DeviceException
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import ToiletlidStatus, XjxToiletProClient
+from .api import ToiletLidStatus, XjxToiletProClient
 from .const import DOMAIN, UPDATE_INTERVAL_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
+class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletLidStatus]):
     """Coordinate polling and commands for one toilet cover."""
 
     def __init__(self, hass: HomeAssistant, client: XjxToiletProClient) -> None:
@@ -41,7 +41,7 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
         self._estimated_states[key] = state
         self.async_update_listeners()
 
-    async def _async_update_data(self) -> ToiletlidStatus:
+    async def _async_update_data(self) -> ToiletLidStatus:
         """Fetch state outside Home Assistant's event loop."""
         try:
             return await self.hass.async_add_executor_job(self.client.status)
@@ -54,7 +54,7 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
         self,
         func: Callable[..., Any],
         *args: Any,
-        verify: Callable[[ToiletlidStatus], bool] | None = None,
+        verify: Callable[[ToiletLidStatus], bool] | None = None,
     ) -> Any:
         """Run a blocking miIO command and refresh state."""
         try:

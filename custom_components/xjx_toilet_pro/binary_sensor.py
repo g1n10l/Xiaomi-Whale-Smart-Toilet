@@ -14,7 +14,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .api import ToiletlidStatus
+from .api import ToiletLidStatus
 from .const import (
     CONF_MAC,
     CONF_MODEL,
@@ -31,7 +31,7 @@ from .entity import XjxToiletProEntity
 class XjxBinarySensorDescription(BinarySensorEntityDescription):
     """Describe an XJX binary sensor."""
 
-    value_fn: Callable[[ToiletlidStatus], bool] | None = None
+    value_fn: Callable[[ToiletLidStatus], bool] | None = None
     estimated_key: str | None = None
 
 

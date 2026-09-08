@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_call_later
 
-from .api import ToiletlidStatus
+from .api import ToiletLidStatus
 from .const import (
     CONF_MAC,
     CONF_MODEL,
@@ -31,7 +31,7 @@ from .entity import XjxToiletProEntity
 class XjxSwitchDescription(SwitchEntityDescription):
     """Describe an XJX switch."""
 
-    value_fn: Callable[[ToiletlidStatus], bool] | None = None
+    value_fn: Callable[[ToiletLidStatus], bool] | None = None
     command_name: str
     optimistic: bool = False
     estimated_duration: int | None = None
