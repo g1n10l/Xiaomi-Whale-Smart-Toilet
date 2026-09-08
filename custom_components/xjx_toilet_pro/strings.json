@@ -44,7 +44,8 @@
   "entity": {
     "binary_sensor": {
       "occupied": {"name": "Occupied"},
-      "air_filter": {"name": "Air filter"}
+      "air_filter": {"name": "Air filter"},
+      "warm_air_drying_status": {"name": "Estimated warm-air drying"}
     },
     "switch": {
       "led": {"name": "Night LED"},

@@ -16,6 +16,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Night LED switch
 - Self-cleaning switch
 - Experimental warm-air drying switch
+- Estimated warm-air drying binary sensor
 - Experimental warm-air temperature selector with three levels
 - Experimental bidet switch
 - Experimental bidet water-temperature selector with three levels
@@ -63,6 +64,11 @@ selected temperature level. It stops drying with `func_off ["warm_dry"]`. The
 device does not reliably report the drying state, so Home Assistant displays
 the last state requested during the current integration session. If the seat
 remains unoccupied, the switch returns to off after three seconds.
+
+The **Estimated warm-air drying** binary sensor mirrors the switch state. It
+returns to off when drying is stopped, three seconds after a rejected start on
+an unoccupied seat, or after the estimated two-minute drying cycle. This is an
+estimate because the device does not reliably expose `status_warmdry`.
 
 The **Warm-air temperature** selector sends `set_fan_temp` with these levels:
 

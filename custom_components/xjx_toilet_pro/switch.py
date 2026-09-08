@@ -21,6 +21,7 @@ from .const import (
     DOMAIN,
     INACTIVE_SWITCH_RESET_SECONDS,
     MODEL_XJX_TOILET_PRO,
+    WARM_AIR_DRYING_DURATION_SECONDS,
 )
 from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
@@ -30,9 +31,10 @@ from .entity import XjxToiletProEntity
 class XjxSwitchDescription(SwitchEntityDescription):
     """Describe an XJX switch."""
 
-    value_fn: Callable[[ToiletlidStatus], bool | None]
+    value_fn: Callable[[ToiletlidStatus], bool] | None = None
     command_name: str
     optimistic: bool = False
+    estimated_duration: int | None = None
 
 
 SWITCHES = (
@@ -54,15 +56,14 @@ SWITCHES = (
         key="warm_air_drying",
         translation_key="warm_air_drying",
         icon="mdi:hair-dryer",
-        value_fn=lambda status: status.warm_air_drying,
         command_name="set_warm_air_drying",
         optimistic=True,
+        estimated_duration=WARM_AIR_DRYING_DURATION_SECONDS,
     ),
     XjxSwitchDescription(
         key="rear_wash",
         translation_key="rear_wash",
         icon="mdi:shower-head",
-        value_fn=lambda status: status.rear_wash,
         command_name="set_rear_wash",
         optimistic=True,
     ),
@@ -108,16 +109,18 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
             unique_suffix=description.key,
         )
         self.entity_description = description
-        self._optimistic_state: bool | None = None
         self._cancel_inactive_reset: Callable[[], None] | None = None
+        self._cancel_estimated_stop: Callable[[], None] | None = None
 
     @property
     def is_on(self) -> bool | None:
         """Return switch state."""
+        if self.entity_description.optimistic:
+            return self.coordinator.estimated_state(self.entity_description.key)
         if not self.coordinator.last_update_success or self.coordinator.data is None:
             return None
-        state = self.entity_description.value_fn(self.coordinator.data)
-        return self._optimistic_state if state is None else state
+        value_fn = self.entity_description.value_fn
+        return value_fn(self.coordinator.data) if value_fn is not None else None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the feature on."""
@@ -129,31 +132,39 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
 
     async def async_will_remove_from_hass(self) -> None:
         """Cancel a pending inactive-seat check before removal."""
-        self._cancel_pending_inactive_reset()
+        self._cancel_pending_resets()
         await super().async_will_remove_from_hass()
 
     async def _async_set_state(self, state: bool) -> None:
         """Set and verify the switch state."""
         func = getattr(self.coordinator.client, self.entity_description.command_name)
+        value_fn = self.entity_description.value_fn
         await self.coordinator.async_execute(
             func,
             state,
             verify=(
                 None
                 if self.entity_description.optimistic
-                else lambda status: self.entity_description.value_fn(status) is state
+                else lambda status: value_fn is not None and value_fn(status) is state
             ),
         )
         if self.entity_description.optimistic:
-            self._cancel_pending_inactive_reset()
-            self._optimistic_state = state
-            self.async_write_ha_state()
+            self._cancel_pending_resets()
+            self.coordinator.async_set_estimated_state(
+                self.entity_description.key, state
+            )
             if state:
                 self._cancel_inactive_reset = async_call_later(
                     self.hass,
                     INACTIVE_SWITCH_RESET_SECONDS,
                     self._reset_if_unoccupied,
                 )
+                if duration := self.entity_description.estimated_duration:
+                    self._cancel_estimated_stop = async_call_later(
+                        self.hass,
+                        duration,
+                        self._stop_estimate,
+                    )
 
     @callback
     def _reset_if_unoccupied(self, _now: Any) -> None:
@@ -161,11 +172,26 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
         self._cancel_inactive_reset = None
         status = self.coordinator.data
         if status is None or not status.seating:
-            self._optimistic_state = False
-            self.async_write_ha_state()
+            if self._cancel_estimated_stop is not None:
+                self._cancel_estimated_stop()
+                self._cancel_estimated_stop = None
+            self.coordinator.async_set_estimated_state(
+                self.entity_description.key, False
+            )
 
-    def _cancel_pending_inactive_reset(self) -> None:
-        """Cancel the pending inactive-seat check."""
+    @callback
+    def _stop_estimate(self, _now: Any) -> None:
+        """Mark an estimated feature as stopped."""
+        self._cancel_estimated_stop = None
+        self.coordinator.async_set_estimated_state(
+            self.entity_description.key, False
+        )
+
+    def _cancel_pending_resets(self) -> None:
+        """Cancel pending estimated-state resets."""
         if self._cancel_inactive_reset is not None:
             self._cancel_inactive_reset()
             self._cancel_inactive_reset = None
+        if self._cancel_estimated_stop is not None:
+            self._cancel_estimated_stop()
+            self._cancel_estimated_stop = None

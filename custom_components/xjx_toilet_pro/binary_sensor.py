@@ -31,7 +31,8 @@ from .entity import XjxToiletProEntity
 class XjxBinarySensorDescription(BinarySensorEntityDescription):
     """Describe an XJX binary sensor."""
 
-    value_fn: Callable[[ToiletlidStatus], bool]
+    value_fn: Callable[[ToiletlidStatus], bool] | None = None
+    estimated_key: str | None = None
 
 
 SENSORS = (
@@ -47,6 +48,13 @@ SENSORS = (
         translation_key="air_filter",
         icon="mdi:air-filter",
         value_fn=lambda status: status.air_filter,
+    ),
+    XjxBinarySensorDescription(
+        key="warm_air_drying_status",
+        translation_key="warm_air_drying_status",
+        icon="mdi:hair-dryer",
+        device_class=BinarySensorDeviceClass.RUNNING,
+        estimated_key="warm_air_drying",
     ),
 )
 
@@ -94,6 +102,11 @@ class XjxToiletProBinarySensor(XjxToiletProEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool | None:
         """Return the binary state."""
+        if self.entity_description.estimated_key is not None:
+            return self.coordinator.estimated_state(
+                self.entity_description.estimated_key
+            )
         if not self.coordinator.last_update_success or self.coordinator.data is None:
             return None
-        return self.entity_description.value_fn(self.coordinator.data)
+        value_fn = self.entity_description.value_fn
+        return value_fn(self.coordinator.data) if value_fn is not None else None

@@ -33,8 +33,6 @@ class ToiletlidStatus:
     air_filter: bool
     led: bool
     self_clean: bool
-    warm_air_drying: bool | None
-    rear_wash: bool | None
 
 
 class XjxToiletProClient(Device):
@@ -58,8 +56,6 @@ class XjxToiletProClient(Device):
             air_filter=_as_bool(data.get("status_airfilter")),
             led=_as_bool(data.get("status_led")),
             self_clean=_as_bool(data.get("status_selfclean")),
-            warm_air_drying=None,
-            rear_wash=None,
         )
 
     def set_self_clean(self, state: bool) -> Any:

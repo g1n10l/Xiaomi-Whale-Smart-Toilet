@@ -9,7 +9,7 @@ from typing import Any
 
 from miio import DeviceException
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import ToiletlidStatus, XjxToiletProClient
@@ -29,6 +29,17 @@ class XjxToiletProCoordinator(DataUpdateCoordinator[ToiletlidStatus]):
             update_interval=timedelta(seconds=UPDATE_INTERVAL_SECONDS),
         )
         self.client = client
+        self._estimated_states: dict[str, bool] = {}
+
+    def estimated_state(self, key: str) -> bool:
+        """Return an estimated feature state."""
+        return self._estimated_states.get(key, False)
+
+    @callback
+    def async_set_estimated_state(self, key: str, state: bool) -> None:
+        """Store an estimated state and notify entities."""
+        self._estimated_states[key] = state
+        self.async_update_listeners()
 
     async def _async_update_data(self) -> ToiletlidStatus:
         """Fetch state outside Home Assistant's event loop."""
