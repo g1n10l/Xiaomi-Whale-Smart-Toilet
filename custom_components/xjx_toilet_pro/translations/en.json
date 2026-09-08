@@ -45,7 +45,8 @@
     "binary_sensor": {
       "occupied": {"name": "Occupied"},
       "air_filter": {"name": "Air filter"},
-      "warm_air_drying_status": {"name": "Estimated warm-air drying"}
+      "warm_air_drying_status": {"name": "Estimated warm-air drying"},
+      "rear_wash_status": {"name": "Estimated bidet state"}
     },
     "switch": {
       "led": {"name": "Night LED"},

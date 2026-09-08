@@ -19,6 +19,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Estimated warm-air drying binary sensor
 - Experimental warm-air temperature selector with three levels
 - Experimental bidet switch
+- Estimated bidet-state binary sensor
 - Experimental bidet water-temperature selector with three levels
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
@@ -87,6 +88,11 @@ selected water temperature, medium water pressure, the middle nozzle position,
 oscillation enabled and massage disabled. It stops washing with
 `func_off ["tun_wash"]`. If the seat remains unoccupied, the switch returns to
 off after three seconds.
+
+The **Estimated bidet state** binary sensor mirrors the bidet switch. It
+returns to off when washing is stopped, three seconds after a rejected start
+on an unoccupied seat, or after the estimated two-minute wash cycle. This is
+an estimate because the device does not reliably expose `status_tunwash`.
 
 The **Bidet water temperature** selector sends `set_water_temp_t` with
 three levels: low (about 35°C), medium (about 37°C) and high (about 39°C).

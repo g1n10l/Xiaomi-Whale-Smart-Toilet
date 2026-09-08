@@ -19,9 +19,9 @@ from .const import (
     DATA_COORDINATOR,
     DEFAULT_NAME,
     DOMAIN,
+    ESTIMATED_OPERATION_DURATION_SECONDS,
     INACTIVE_SWITCH_RESET_SECONDS,
     MODEL_XJX_TOILET_PRO,
-    WARM_AIR_DRYING_DURATION_SECONDS,
 )
 from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
@@ -58,7 +58,7 @@ SWITCHES = (
         icon="mdi:hair-dryer",
         command_name="set_warm_air_drying",
         optimistic=True,
-        estimated_duration=WARM_AIR_DRYING_DURATION_SECONDS,
+        estimated_duration=ESTIMATED_OPERATION_DURATION_SECONDS,
     ),
     XjxSwitchDescription(
         key="rear_wash",
@@ -66,6 +66,7 @@ SWITCHES = (
         icon="mdi:shower-head",
         command_name="set_rear_wash",
         optimistic=True,
+        estimated_duration=ESTIMATED_OPERATION_DURATION_SECONDS,
     ),
 )
 

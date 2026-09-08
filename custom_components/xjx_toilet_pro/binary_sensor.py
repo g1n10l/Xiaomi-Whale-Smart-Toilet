@@ -56,6 +56,13 @@ SENSORS = (
         device_class=BinarySensorDeviceClass.RUNNING,
         estimated_key="warm_air_drying",
     ),
+    XjxBinarySensorDescription(
+        key="rear_wash_status",
+        translation_key="rear_wash_status",
+        icon="mdi:shower-head",
+        device_class=BinarySensorDeviceClass.RUNNING,
+        estimated_key="rear_wash",
+    ),
 )
 
 
