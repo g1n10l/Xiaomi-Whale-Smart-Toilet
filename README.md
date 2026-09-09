@@ -5,6 +5,12 @@
 
 A local Home Assistant integration for the **Xiaomi Mijia Whale Smart Toilet Cover**, model `xjx.toilet.pro`. It communicates directly with the device through Xiaomi miIO and does not require the Xiaomi cloud after setup.
 
+## Product
+
+[![Xiaomi Mijia Whale Smart Toilet Cover](https://raw.githubusercontent.com/blakadder/whale_spout_manual/main/whale_spout_pro.jpg)](https://home.miot-spec.com/s/xjx.toilet.pro)
+
+The image links to the [Xiaomi Miot specification page for `xjx.toilet.pro`](https://home.miot-spec.com/s/xjx.toilet.pro), which identifies the device described in this project. The image is from the [Whale Spout manual repository](https://github.com/blakadder/whale_spout_manual).
+
 This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.com/tykarol/home-assistant-xjx-toilet-pro) for Home Assistant 2026.9 and newer. It replaces the old YAML setup and no longer requires the separate `toiletlid` component.
 
 ## Features
