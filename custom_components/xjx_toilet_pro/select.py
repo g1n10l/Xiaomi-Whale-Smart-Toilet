@@ -36,6 +36,7 @@ class XjxTemperatureDescription(SelectEntityDescription):
     remember_command_name: str
     temperatures: Mapping[str, int]
     active_operation: str | None = None
+    restore_to_device: bool = False
 
 
 TEMPERATURE_SELECTS = (
@@ -47,6 +48,7 @@ TEMPERATURE_SELECTS = (
         command_name="set_seat_temperature",
         remember_command_name="remember_seat_temperature",
         temperatures=SEAT_TEMPERATURES,
+        restore_to_device=True,
     ),
     XjxTemperatureDescription(
         key="fan_temperature",
@@ -128,6 +130,15 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
                 self.entity_description.remember_command_name,
             )
             remember(self.entity_description.temperatures[self._selected_option])
+            if self.entity_description.restore_to_device:
+                command = getattr(
+                    self.coordinator.client,
+                    self.entity_description.command_name,
+                )
+                await self.coordinator.async_execute(
+                    command,
+                    self.entity_description.temperatures[self._selected_option],
+                )
 
     @property
     def current_option(self) -> str | None:
