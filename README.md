@@ -127,10 +127,10 @@ an estimate because the device does not reliably expose `status_tunwash`.
 The **Rear-wash water temperature** selector has three levels: low (about 35°C),
 medium (about 37°C) and high (about 39°C). Home Assistant stores every selection
 and passes the temperature in degrees Celsius to `tun_wash_on` when rear washing
-starts. While washing is active, the selector also sends the value to
-`set_water_temp_t` to apply the change immediately. New entities start at 37°C.
-The device may require the seat to be occupied before it accepts the start
-command.
+starts. While washing is active, the selector sends `tun_wash_on` again with
+the new temperature and the current default wash parameters to apply the change
+immediately. New entities start at 37°C. The device may require the seat to be
+occupied before it accepts the start command.
 
 ## Raw command action
 

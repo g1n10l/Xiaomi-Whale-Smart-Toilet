@@ -111,9 +111,18 @@ class XjxToiletProClient(Device):
         return self.send("func_off", ["tun_wash"])
 
     def set_rear_wash_water_temperature(self, temperature: int) -> Any:
-        """Set the rear-wash water temperature."""
+        """Apply a new water temperature during active rear washing."""
         _validate_temperature(temperature, (35, 37, 39))
-        result = self.send("set_water_temp_t", [temperature])
+        result = self.send(
+            "tun_wash_on",
+            [
+                temperature,
+                DEFAULT_REAR_WASH_STRENGTH,
+                DEFAULT_REAR_WASH_POSITION,
+                DEFAULT_REAR_WASH_MOVING,
+                DEFAULT_REAR_WASH_MASSAGE,
+            ],
+        )
         self._rear_wash_water_temperature = temperature
         return result
 
