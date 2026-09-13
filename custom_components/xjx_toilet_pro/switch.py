@@ -8,9 +8,11 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_call_later
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from .api import ToiletLidStatus
 from .const import (
@@ -88,7 +90,7 @@ async def async_setup_entry(
     )
 
 
-class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
+class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity, RestoreEntity):
     """Representation of a toilet-cover switch."""
 
     entity_description: XjxSwitchDescription
@@ -112,6 +114,23 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
         self.entity_description = description
         self._cancel_inactive_reset: Callable[[], None] | None = None
         self._cancel_estimated_stop: Callable[[], None] | None = None
+
+    async def async_added_to_hass(self) -> None:
+        """Restore an active operation while the seat remains occupied."""
+        await super().async_added_to_hass()
+        if (
+            not self.entity_description.optimistic
+            or self.coordinator.data is None
+            or not self.coordinator.data.seating
+        ):
+            return
+        last_state = await self.async_get_last_state()
+        if last_state is None or last_state.state != STATE_ON:
+            return
+        self.coordinator.async_set_estimated_state(
+            self.entity_description.key, True
+        )
+        self._schedule_pending_resets()
 
     @property
     def is_on(self) -> bool | None:
@@ -155,17 +174,21 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity):
                 self.entity_description.key, state
             )
             if state:
-                self._cancel_inactive_reset = async_call_later(
-                    self.hass,
-                    INACTIVE_SWITCH_RESET_SECONDS,
-                    self._reset_if_unoccupied,
-                )
-                if duration := self.entity_description.estimated_duration:
-                    self._cancel_estimated_stop = async_call_later(
-                        self.hass,
-                        duration,
-                        self._stop_estimate,
-                    )
+                self._schedule_pending_resets()
+
+    def _schedule_pending_resets(self) -> None:
+        """Schedule occupancy verification and estimated operation end."""
+        self._cancel_inactive_reset = async_call_later(
+            self.hass,
+            INACTIVE_SWITCH_RESET_SECONDS,
+            self._reset_if_unoccupied,
+        )
+        if duration := self.entity_description.estimated_duration:
+            self._cancel_estimated_stop = async_call_later(
+                self.hass,
+                duration,
+                self._stop_estimate,
+            )
 
     @callback
     def _reset_if_unoccupied(self, _now: Any) -> None:

@@ -28,6 +28,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Experimental warm-air temperature selector with three levels
 - Experimental rear-wash switch
 - Estimated rear-wash binary sensor
+- Restore active-operation switch states while the seat remains occupied
 - Experimental rear-wash water-temperature selector with three levels
 - `xjx_toilet_pro.send_command` action for advanced automations
 - Stable device and entity identifiers based on the device MAC address
@@ -123,6 +124,11 @@ The **Estimated rear-wash state** binary sensor mirrors the rear-wash switch. It
 returns to off when washing is stopped, three seconds after a rejected start
 on an unoccupied seat, or after the estimated two-minute wash cycle. This is
 an estimate because the device does not reliably expose `status_tunwash`.
+
+After an integration reload, Home Assistant restores an enabled warm-air drying
+or rear-wash switch only if the seat still reports occupied. Restoring the state
+does not send another start command to the device. The usual occupancy check and
+two-minute automatic reset still apply.
 
 The **Rear-wash water temperature** selector has three levels: low (about 35°C),
 medium (about 37°C) and high (about 39°C). Home Assistant stores every selection
