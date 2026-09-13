@@ -95,8 +95,8 @@ The **Warm-air temperature** selector has these levels:
 
 The device does not reliably report `fan_temp`, so Home Assistant stores every
 selection and passes it to `warm_dry_on` when drying starts. While drying is
-active, the selector also sends `set_fan_temp` to apply the change immediately.
-New entities start at 43°C.
+active, the selector sends `warm_dry_on` again with the new temperature to
+apply the change immediately. New entities start at 43°C.
 
 ## Seat temperature
 

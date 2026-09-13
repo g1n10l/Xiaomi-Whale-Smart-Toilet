@@ -82,9 +82,9 @@ class XjxToiletProClient(Device):
         return self.send("func_off", ["warm_dry"])
 
     def set_fan_temperature(self, temperature: int) -> Any:
-        """Set the warm-air temperature."""
+        """Apply a new temperature during active warm-air drying."""
         _validate_temperature(temperature, (36, 43, 50))
-        result = self.send("set_fan_temp", [temperature])
+        result = self.send("warm_dry_on", [temperature])
         self._fan_temperature = temperature
         return result
 
