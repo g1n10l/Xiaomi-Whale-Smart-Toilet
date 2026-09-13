@@ -58,6 +58,15 @@
       "rear_wash": {"name": "Mycie tylne"}
     },
     "select": {
+      "seat_temperature": {
+        "name": "Temperatura deski",
+        "state": {
+          "off": "Wyłączone (temperatura pokojowa)",
+          "low": "Niska (około 32°C)",
+          "medium": "Średnia (około 35°C)",
+          "high": "Wysoka (około 38°C)"
+        }
+      },
       "fan_temperature": {
         "name": "Temperatura ciepłego nawiewu",
         "state": {

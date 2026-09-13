@@ -24,6 +24,7 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Self-cleaning switch
 - Experimental warm-air drying switch
 - Estimated warm-air drying binary sensor
+- Experimental seat-temperature selector with four levels
 - Experimental warm-air temperature selector with three levels
 - Experimental rear-wash switch
 - Estimated rear-wash binary sensor
@@ -96,6 +97,18 @@ The device does not reliably report `fan_temp`, so Home Assistant stores every
 selection and passes it to `warm_dry_on` when drying starts. While drying is
 active, the selector also sends `set_fan_temp` to apply the change immediately.
 New entities start at 43°C.
+
+## Seat temperature
+
+The **Seat temperature** selector sends `set_seat_temp` immediately and has
+four levels: off (room temperature), low (about 32°C), medium (about 35°C)
+and high (about 38°C). Home Assistant restores the last selected level after
+a restart. New entities start at 35°C.
+
+The device lowers the seat temperature after about ten minutes of continuous
+occupancy to reduce the risk of a low-temperature burn. The selector is
+experimental because the command has not yet been verified by the maintainer
+on a physical `xjx.toilet.pro` device.
 
 ## Rear wash
 

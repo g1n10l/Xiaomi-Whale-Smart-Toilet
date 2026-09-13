@@ -24,6 +24,7 @@ from .entity import XjxToiletProEntity
 
 DEFAULT_TEMPERATURE_OPTION = "medium"
 FAN_TEMPERATURES = {"low": 36, "medium": 43, "high": 50}
+SEAT_TEMPERATURES = {"off": 0, "low": 32, "medium": 35, "high": 38}
 REAR_WASH_WATER_TEMPERATURES = {"low": 35, "medium": 37, "high": 39}
 
 
@@ -38,6 +39,15 @@ class XjxTemperatureDescription(SelectEntityDescription):
 
 
 TEMPERATURE_SELECTS = (
+    XjxTemperatureDescription(
+        key="seat_temperature",
+        translation_key="seat_temperature",
+        icon="mdi:car-seat-heater",
+        options=list(SEAT_TEMPERATURES),
+        command_name="set_seat_temperature",
+        remember_command_name="remember_seat_temperature",
+        temperatures=SEAT_TEMPERATURES,
+    ),
     XjxTemperatureDescription(
         key="fan_temperature",
         translation_key="fan_temperature",

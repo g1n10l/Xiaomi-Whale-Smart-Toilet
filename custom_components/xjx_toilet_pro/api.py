@@ -18,6 +18,7 @@ AVAILABLE_PROPERTIES: list[str] = [
 ]
 
 DEFAULT_FAN_TEMPERATURE = 43
+DEFAULT_SEAT_TEMPERATURE = 0
 DEFAULT_REAR_WASH_WATER_TEMPERATURE = 37
 DEFAULT_REAR_WASH_STRENGTH = 2
 DEFAULT_REAR_WASH_POSITION = 2
@@ -47,6 +48,7 @@ class XjxToiletProClient(Device):
         )
         super().__init__(ip, token, model=supported_model)
         self._fan_temperature = DEFAULT_FAN_TEMPERATURE
+        self._seat_temperature = DEFAULT_SEAT_TEMPERATURE
         self._rear_wash_water_temperature = DEFAULT_REAR_WASH_WATER_TEMPERATURE
 
     def status(self) -> ToiletLidStatus:
@@ -86,6 +88,13 @@ class XjxToiletProClient(Device):
         self._fan_temperature = temperature
         return result
 
+    def set_seat_temperature(self, temperature: int) -> Any:
+        """Set the seat-ring temperature."""
+        _validate_temperature(temperature, (0, 32, 35, 38))
+        result = self.send("set_seat_temp", [temperature])
+        self._seat_temperature = temperature
+        return result
+
     def set_rear_wash(self, state: bool) -> Any:
         """Start or stop rear washing."""
         if state:
@@ -112,6 +121,11 @@ class XjxToiletProClient(Device):
         """Remember an air temperature without sending a command."""
         _validate_temperature(temperature, (36, 43, 50))
         self._fan_temperature = temperature
+
+    def remember_seat_temperature(self, temperature: int) -> None:
+        """Remember a seat temperature without sending a command."""
+        _validate_temperature(temperature, (0, 32, 35, 38))
+        self._seat_temperature = temperature
 
     def remember_rear_wash_water_temperature(self, temperature: int) -> None:
         """Remember a water temperature without sending a command."""

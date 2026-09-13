@@ -58,6 +58,15 @@
       "rear_wash": {"name": "Rear wash"}
     },
     "select": {
+      "seat_temperature": {
+        "name": "Seat temperature",
+        "state": {
+          "off": "Off (room temperature)",
+          "low": "Low (about 32°C)",
+          "medium": "Medium (about 35°C)",
+          "high": "High (about 38°C)"
+        }
+      },
       "fan_temperature": {
         "name": "Warm-air temperature",
         "state": {
