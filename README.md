@@ -101,11 +101,11 @@ apply the change immediately. New entities start at 43°C.
 
 ## Seat temperature
 
-The **Seat temperature** selector sends `set_seat_temp` immediately and has
-four levels: off (room temperature), low (about 32°C), medium (about 35°C)
-and high (about 38°C). Home Assistant restores the last selected level after
-a restart and sends it to the device again when the integration loads. New
-entities start at 35°C.
+The **Seat temperature** selector sends `set_seat_temp` only when you choose a
+level: off (room temperature), low (about 32°C), medium (about 35°C) or high
+(about 38°C). After a Home Assistant restart, the selector shows an unknown
+level until you choose one. The integration does not send a seat-temperature
+command at startup because it cannot read the current setting from the device.
 
 The device lowers the seat temperature after about ten minutes of continuous
 occupancy to reduce the risk of a low-temperature burn. The selector is

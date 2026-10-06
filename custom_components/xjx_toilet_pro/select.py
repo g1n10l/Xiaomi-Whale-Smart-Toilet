@@ -36,7 +36,7 @@ class XjxTemperatureDescription(SelectEntityDescription):
     remember_command_name: str
     temperatures: Mapping[str, int]
     active_operation: str | None = None
-    restore_to_device: bool = False
+    restore_option: bool = True
 
 
 TEMPERATURE_SELECTS = (
@@ -48,7 +48,7 @@ TEMPERATURE_SELECTS = (
         command_name="set_seat_temperature",
         remember_command_name="remember_seat_temperature",
         temperatures=SEAT_TEMPERATURES,
-        restore_to_device=True,
+        restore_option=False,
     ),
     XjxTemperatureDescription(
         key="fan_temperature",
@@ -116,11 +116,15 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
             unique_suffix=description.key,
         )
         self.entity_description = description
-        self._selected_option = DEFAULT_TEMPERATURE_OPTION
+        self._selected_option = (
+            DEFAULT_TEMPERATURE_OPTION if description.restore_option else None
+        )
 
     async def async_added_to_hass(self) -> None:
-        """Restore the last selected temperature."""
+        """Restore saved options without sending commands to the device."""
         await super().async_added_to_hass()
+        if not self.entity_description.restore_option:
+            return
         if (
             last_state := await self.async_get_last_state()
         ) is not None and last_state.state in self.entity_description.temperatures:
@@ -130,15 +134,6 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
                 self.entity_description.remember_command_name,
             )
             remember(self.entity_description.temperatures[self._selected_option])
-            if self.entity_description.restore_to_device:
-                command = getattr(
-                    self.coordinator.client,
-                    self.entity_description.command_name,
-                )
-                await self.coordinator.async_execute(
-                    command,
-                    self.entity_description.temperatures[self._selected_option],
-                )
 
     @property
     def current_option(self) -> str | None:
