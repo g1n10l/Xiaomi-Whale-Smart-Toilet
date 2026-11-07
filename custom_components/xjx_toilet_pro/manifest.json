@@ -9,8 +9,8 @@
   "issue_tracker": "https://github.com/g1n10l/Xiaomi-Whale-Smart-Toilet/issues",
   "loggers": ["miio"],
   "requirements": [
-    "construct==2.10.68",
-    "python-miio==0.5.12"
+    "construct>=2.10.68",
+    "python-miio>=0.5.12"
   ],
-  "version": "2026.11.1"
+  "version": "2026.11.2"
 }
