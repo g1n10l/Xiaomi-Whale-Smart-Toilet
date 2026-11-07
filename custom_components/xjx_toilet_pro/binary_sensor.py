@@ -44,12 +44,6 @@ SENSORS = (
         value_fn=lambda status: status.seating,
     ),
     XjxBinarySensorDescription(
-        key="air_filter",
-        translation_key="air_filter",
-        icon="mdi:air-filter",
-        value_fn=lambda status: status.air_filter,
-    ),
-    XjxBinarySensorDescription(
         key="warm_air_drying_status",
         translation_key="warm_air_drying_status",
         icon="mdi:hair-dryer",

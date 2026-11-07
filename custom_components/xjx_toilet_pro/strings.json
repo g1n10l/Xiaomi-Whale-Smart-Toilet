@@ -44,7 +44,6 @@
   "entity": {
     "binary_sensor": {
       "occupied": {"name": "Occupied"},
-      "air_filter": {"name": "Air filter"},
       "warm_air_drying_status": {"name": "Estimated warm-air drying"},
       "rear_wash_status": {"name": "Estimated rear-wash state"}
     },
@@ -61,26 +60,26 @@
       "seat_temperature": {
         "name": "Seat temperature",
         "state": {
-          "off": "Off (room temperature)",
-          "low": "Low (about 32°C)",
-          "medium": "Medium (about 35°C)",
-          "high": "High (about 38°C)"
+          "off": "Off",
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
         }
       },
       "fan_temperature": {
         "name": "Warm-air temperature",
         "state": {
-          "low": "Low (about 36°C)",
-          "medium": "Medium (about 43°C)",
-          "high": "High (about 50°C)"
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
         }
       },
       "rear_wash_water_temperature": {
         "name": "Rear-wash water temperature",
         "state": {
-          "low": "Low (about 35°C)",
-          "medium": "Medium (about 37°C)",
-          "high": "High (about 39°C)"
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
         }
       }
     }

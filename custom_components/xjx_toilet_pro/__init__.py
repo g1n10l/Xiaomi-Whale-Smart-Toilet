@@ -17,6 +17,7 @@ from homeassistant.exceptions import (
     ServiceValidationError,
 )
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.typing import ConfigType
 
 from .api import XjxToiletProClient
@@ -121,6 +122,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     mac = str(entry.data.get(CONF_MAC) or info.mac_address).lower()
     coordinator = XjxToiletProCoordinator(hass, client)
     await coordinator.async_config_entry_first_refresh()
+
+    # Retire the air-filter entity: this firmware does not provide a reliable
+    # value, and keeping the old registry entry would leave a stale entity.
+    registry = er.async_get(hass)
+    if entity_id := registry.async_get_entity_id(
+        Platform.BINARY_SENSOR, DOMAIN, f"{mac}_air_filter"
+    ):
+        registry.async_remove(entity_id)
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
         DATA_COORDINATOR: coordinator,

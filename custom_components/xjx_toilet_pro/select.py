@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
@@ -23,9 +24,10 @@ from .coordinator import XjxToiletProCoordinator
 from .entity import XjxToiletProEntity
 
 DEFAULT_TEMPERATURE_OPTION = "medium"
-FAN_TEMPERATURES = {"low": 36, "medium": 43, "high": 50}
-SEAT_TEMPERATURES = {"off": 0, "low": 32, "medium": 35, "high": 38}
-REAR_WASH_WATER_TEMPERATURES = {"low": 35, "medium": 37, "high": 39}
+# Device levels, not degrees (see api.py).
+FAN_TEMPERATURES = {"low": 1, "medium": 2, "high": 3}
+SEAT_TEMPERATURES = {"off": 0, "low": 1, "medium": 2, "high": 3}
+REAR_WASH_WATER_TEMPERATURES = {"low": 1, "medium": 2, "high": 3}
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -143,6 +145,20 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
     async def async_select_option(self, option: str) -> None:
         """Set the temperature level."""
         temperature = self.entity_description.temperatures[option]
+        active_operation = self.entity_description.active_operation
+        if not active_operation or self.coordinator.estimated_state(active_operation):
+            if active_operation:
+                status = self.coordinator.data
+                if status is None or not status.seating:
+                    raise HomeAssistantError(
+                        "The seat must be occupied before changing an active function"
+                    )
+            command = getattr(
+                self.coordinator.client,
+                self.entity_description.command_name,
+            )
+            await self.coordinator.async_execute(command, temperature)
+
         remember = getattr(
             self.coordinator.client,
             self.entity_description.remember_command_name,
@@ -150,13 +166,3 @@ class XjxTemperatureSelect(XjxToiletProEntity, SelectEntity, RestoreEntity):
         remember(temperature)
         self._selected_option = option
         self.async_write_ha_state()
-
-        active_operation = self.entity_description.active_operation
-        if active_operation and not self.coordinator.estimated_state(active_operation):
-            return
-
-        command = getattr(
-            self.coordinator.client,
-            self.entity_description.command_name,
-        )
-        await self.coordinator.async_execute(command, temperature)

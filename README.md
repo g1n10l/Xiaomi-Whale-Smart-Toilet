@@ -18,7 +18,6 @@ This project modernizes [tykarol/home-assistant-xjx-toilet-pro](https://github.c
 - Setup and reconfiguration through the Home Assistant interface
 - Local polling every 30 seconds
 - Seat occupancy binary sensor
-- Air filter status binary sensor
 - Water-filter remaining-days sensor
 - Night LED switch
 - Self-cleaning switch
@@ -75,37 +74,40 @@ The official Mi Home plugin stores this value with an offset of 1000, so the
 integration converts `1180` to 180 days. Invalid or unsupported values appear
 as unknown instead of an incorrect negative number.
 
+The air-filter status entity has been removed. On firmware 2.1.3 its status
+query times out, so the integration cannot report a reliable value. Existing
+air-filter entities are removed from the Home Assistant entity registry when
+the integration loads; update automations that referenced them.
+
 ## Warm-air drying
 
 The **Warm-air drying** switch starts drying with `warm_dry_on` and the last
-selected temperature level. It stops drying with `func_off ["warm_dry"]`. The
-device does not reliably report the drying state, so Home Assistant displays
-the last state requested during the current integration session. If the seat
-remains unoccupied, the switch returns to off after three seconds.
+selected temperature level. The seat must report occupied before it starts.
+When drying is active, the switch stops it with `func_off ["warm_dry"]`.
+The device does not reliably report the drying state, so Home Assistant
+displays an estimated state.
 
 The **Estimated warm-air drying** binary sensor mirrors the switch state. It
-returns to off when drying is stopped, three seconds after a rejected start on
-an unoccupied seat, or after the estimated two-minute drying cycle. This is an
+returns to off when drying is stopped, the seat becomes unoccupied, or after
+the estimated two-minute drying cycle. This is an
 estimate because the device does not reliably expose `status_warmdry`.
 
-The **Warm-air temperature** selector has these levels:
-
-- Low: 36°C
-- Medium: 43°C
-- High: 50°C
+The **Warm-air temperature** selector sends device levels: low `1`, medium
+`2`, high `3`. Level `2` was measured by the issue reporter on firmware 2.1.3;
+levels `1` and `3` have not been measured separately.
 
 The device does not reliably report `fan_temp`, so Home Assistant stores every
 selection and passes it to `warm_dry_on` when drying starts. While drying is
 active, the selector sends `warm_dry_on` again with the new temperature to
-apply the change immediately. New entities start at 43°C.
+apply the change immediately. New entities start at level `2`.
 
 ## Seat temperature
 
 The **Seat temperature** selector sends `set_seat_temp` only when you choose a
-level: off (room temperature), low (about 32°C), medium (about 35°C) or high
-(about 38°C). After a Home Assistant restart, the selector shows an unknown
-level until you choose one. The integration does not send a seat-temperature
-command at startup because it cannot read the current setting from the device.
+level: off `0`, low `1`, medium `2` or high `3`. After a Home Assistant
+restart, the selector shows an unknown level until you choose one. The
+integration does not send a seat-temperature command at startup because it
+cannot read the current setting from the device.
 
 The device lowers the seat temperature after about ten minutes of continuous
 occupancy to reduce the risk of a low-temperature burn. The selector is
@@ -114,15 +116,14 @@ on a physical `xjx.toilet.pro` device.
 
 ## Rear wash
 
-The **Rear wash** switch starts washing with `tun_wash_on`. It sends the last
-selected water temperature, medium water pressure, the middle nozzle position,
-oscillation enabled and massage disabled. It stops washing with
-`func_off ["tun_wash"]`. If the seat remains unoccupied, the switch returns to
-off after three seconds.
+The **Rear wash** switch starts washing with `tun_wash_on` only while the seat
+reports occupied. It sends the last selected water temperature level, medium
+water pressure, the middle nozzle position, oscillation enabled and massage
+disabled. When washing is active, it stops with `func_off ["tun_wash"]`.
 
 The **Estimated rear-wash state** binary sensor mirrors the rear-wash switch. It
-returns to off when washing is stopped, three seconds after a rejected start
-on an unoccupied seat, or after the estimated two-minute wash cycle. This is
+returns to off when washing is stopped, the seat becomes unoccupied, or after
+the estimated two-minute wash cycle. This is
 an estimate because the device does not reliably expose `status_tunwash`.
 
 After an integration reload, Home Assistant restores an enabled warm-air drying
@@ -130,13 +131,12 @@ or rear-wash switch only if the seat still reports occupied. Restoring the state
 does not send another start command to the device. The usual occupancy check and
 two-minute automatic reset still apply.
 
-The **Rear-wash water temperature** selector has three levels: low (about 35°C),
-medium (about 37°C) and high (about 39°C). Home Assistant stores every selection
-and passes the temperature in degrees Celsius to `tun_wash_on` when rear washing
-starts. While washing is active, the selector sends `tun_wash_on` again with
-the new temperature and the current default wash parameters to apply the change
-immediately. New entities start at 37°C. The device may require the seat to be
-occupied before it accepts the start command.
+The **Rear-wash water temperature** selector has three device levels: low `1`,
+medium `2` and high `3`. Home Assistant stores every selection and passes the
+level to `tun_wash_on` when rear washing starts. While washing is active, the
+selector sends `tun_wash_on` again with the new level and the current default
+wash parameters to apply the change immediately. New entities start at level
+`2`.
 
 ## Raw command action
 
@@ -152,9 +152,9 @@ Example:
 action: xjx_toilet_pro.send_command
 data:
   config_entry_id: 01JEXAMPLE123456789
-  command: func_off
+  command: get_prop
   params:
-    - night_led
+    - seating
 ```
 
 Raw commands bypass the safeguards provided by entities. Use them only when you know how the device handles the selected command.

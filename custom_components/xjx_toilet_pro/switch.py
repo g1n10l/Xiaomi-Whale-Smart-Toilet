@@ -10,6 +10,7 @@ from homeassistant.components.switch import SwitchEntity, SwitchEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -37,6 +38,7 @@ class XjxSwitchDescription(SwitchEntityDescription):
     command_name: str
     optimistic: bool = False
     estimated_duration: int | None = None
+    requires_seat: bool = False
 
 
 SWITCHES = (
@@ -44,15 +46,16 @@ SWITCHES = (
         key="led",
         translation_key="led",
         icon="mdi:led-on",
-        value_fn=lambda status: status.led,
         command_name="set_led",
+        optimistic=True,
     ),
     XjxSwitchDescription(
         key="self_clean",
         translation_key="self_clean",
         icon="mdi:spray-bottle",
-        value_fn=lambda status: status.self_clean,
         command_name="set_self_clean",
+        optimistic=True,
+        estimated_duration=ESTIMATED_OPERATION_DURATION_SECONDS,
     ),
     XjxSwitchDescription(
         key="warm_air_drying",
@@ -61,6 +64,7 @@ SWITCHES = (
         command_name="set_warm_air_drying",
         optimistic=True,
         estimated_duration=ESTIMATED_OPERATION_DURATION_SECONDS,
+        requires_seat=True,
     ),
     XjxSwitchDescription(
         key="rear_wash",
@@ -69,6 +73,7 @@ SWITCHES = (
         command_name="set_rear_wash",
         optimistic=True,
         estimated_duration=ESTIMATED_OPERATION_DURATION_SECONDS,
+        requires_seat=True,
     ),
 )
 
@@ -118,8 +123,15 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity, RestoreEntity):
     async def async_added_to_hass(self) -> None:
         """Restore an active operation while the seat remains occupied."""
         await super().async_added_to_hass()
+        desc = self.entity_description
+        if desc.optimistic and not desc.requires_seat and desc.estimated_duration is None:
+            # Night LED: the device cannot report it, so keep the last known state.
+            last_state = await self.async_get_last_state()
+            if last_state is not None and last_state.state == STATE_ON:
+                self.coordinator.async_set_estimated_state(desc.key, True)
+            return
         if (
-            not self.entity_description.optimistic
+            not self.entity_description.requires_seat
             or self.coordinator.data is None
             or not self.coordinator.data.seating
         ):
@@ -157,6 +169,19 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity, RestoreEntity):
 
     async def _async_set_state(self, state: bool) -> None:
         """Set and verify the switch state."""
+        desc = self.entity_description
+        if desc.optimistic and not state and not self.coordinator.estimated_state(desc.key):
+            # Nothing is running: a stop command for an idle function makes the
+            # MCU stop answering for minutes, so only update the displayed state.
+            self._cancel_pending_resets()
+            self.coordinator.async_set_estimated_state(desc.key, False)
+            return
+        if state and desc.requires_seat:
+            status = self.coordinator.data
+            if status is None or not status.seating:
+                raise HomeAssistantError(
+                    "The seat must be occupied before starting this function"
+                )
         func = getattr(self.coordinator.client, self.entity_description.command_name)
         value_fn = self.entity_description.value_fn
         await self.coordinator.async_execute(
@@ -178,11 +203,12 @@ class XjxToiletProSwitch(XjxToiletProEntity, SwitchEntity, RestoreEntity):
 
     def _schedule_pending_resets(self) -> None:
         """Schedule occupancy verification and estimated operation end."""
-        self._cancel_inactive_reset = async_call_later(
-            self.hass,
-            INACTIVE_SWITCH_RESET_SECONDS,
-            self._reset_if_unoccupied,
-        )
+        if self.entity_description.requires_seat:
+            self._cancel_inactive_reset = async_call_later(
+                self.hass,
+                INACTIVE_SWITCH_RESET_SECONDS,
+                self._reset_if_unoccupied,
+            )
         if duration := self.entity_description.estimated_duration:
             self._cancel_estimated_stop = async_call_later(
                 self.hass,
